@@ -2,18 +2,12 @@ import { useState } from "react";
 import { Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Progress } from "@/components/ui/progress";
-
-interface UploadProgress {
-  totalFiles: number;
-  completedFiles: number;
-  currentFileName: string;
-}
+import { UploadQueue, UploadItem } from "./UploadQueue";
 
 export const DocumentUpload = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
+  const [uploadQueue, setUploadQueue] = useState<UploadItem[]>([]);
   const { toast } = useToast();
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -38,7 +32,6 @@ export const DocumentUpload = () => {
   };
 
   const getBaseFileName = (fileName: string) => {
-    // Remove the extension from the file name
     return fileName.replace(/\.[^/.]+$/, "");
   };
 
@@ -46,11 +39,14 @@ export const DocumentUpload = () => {
     if (files.length === 0) return;
 
     setIsUploading(true);
-    setUploadProgress({
-      totalFiles: files.length,
-      completedFiles: 0,
-      currentFileName: files[0].name,
-    });
+    
+    // Initialize upload queue
+    const newQueue = files.map(file => ({
+      file,
+      progress: 0,
+      status: 'waiting' as const
+    }));
+    setUploadQueue(prev => [...prev, ...newQueue]);
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -63,29 +59,14 @@ export const DocumentUpload = () => {
         return;
       }
 
-      // Show the upload progress toast
-      toast({
-        title: "Uploading files",
-        description: (
-          <div className="w-full">
-            <div className="flex justify-between mb-2">
-              <span className="text-sm text-gray-500">
-                {uploadProgress?.currentFileName}
-              </span>
-              <span className="text-sm text-gray-500">
-                {uploadProgress?.completedFiles}/{uploadProgress?.totalFiles} files
-              </span>
-            </div>
-            <Progress 
-              value={(uploadProgress?.completedFiles || 0) / files.length * 100} 
-              className="h-2"
-            />
-          </div>
-        ),
-        duration: Infinity,
-      });
-
       for (const [index, file] of files.entries()) {
+        // Update status to uploading
+        setUploadQueue(prev => prev.map(item => 
+          item.file === file 
+            ? { ...item, status: 'uploading' as const }
+            : item
+        ));
+
         const formData = new FormData();
         formData.append('file', file);
 
@@ -103,7 +84,6 @@ export const DocumentUpload = () => {
           throw new Error(result.error || 'Failed to upload file');
         }
 
-        // Use the base name (without extension) as the document name
         const baseName = getBaseFileName(file.name);
         const { error: dbError } = await supabase
           .from('documents')
@@ -116,11 +96,12 @@ export const DocumentUpload = () => {
 
         if (dbError) throw dbError;
 
-        setUploadProgress(prev => ({
-          totalFiles: files.length,
-          completedFiles: (prev?.completedFiles || 0) + 1,
-          currentFileName: index < files.length - 1 ? files[index + 1].name : file.name,
-        }));
+        // Update progress and status
+        setUploadQueue(prev => prev.map(item => 
+          item.file === file 
+            ? { ...item, progress: 100, status: 'completed' as const }
+            : item
+        ));
       }
 
       // Show success toast
@@ -128,6 +109,12 @@ export const DocumentUpload = () => {
         title: "Success",
         description: `Uploaded ${files.length} file${files.length > 1 ? 's' : ''}`,
       });
+
+      // Clear completed uploads after a delay
+      setTimeout(() => {
+        setUploadQueue(prev => prev.filter(item => item.status !== 'completed'));
+      }, 3000);
+
     } catch (error) {
       toast({
         title: "Error",
@@ -136,46 +123,56 @@ export const DocumentUpload = () => {
       });
     } finally {
       setIsUploading(false);
-      setUploadProgress(null);
     }
   };
 
+  const handleCancelUpload = (file: File) => {
+    setUploadQueue(prev => prev.filter(item => item.file !== file));
+    toast({
+      title: "Upload cancelled",
+      description: `Cancelled upload of ${file.name}`,
+    });
+  };
+
   return (
-    <div
-      className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-        isDragging ? "border-primary bg-primary/5" : "border-gray-300"
-      }`}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      {isUploading ? (
-        <Loader2 className="mx-auto h-12 w-12 text-gray-400 animate-spin" />
-      ) : (
-        <Upload className="mx-auto h-12 w-12 text-gray-400" />
-      )}
-      <h3 className="mt-4 text-lg font-medium">Upload Documents</h3>
-      <p className="mt-2 text-sm text-gray-500">
-        {isUploading
-          ? "Uploading files..."
-          : "Drag and drop your files here, or click to select files"}
-      </p>
-      <input
-        type="file"
-        multiple
-        className="hidden"
-        id="file-upload"
-        onChange={handleFileInput}
-        disabled={isUploading}
-      />
-      <label
-        htmlFor="file-upload"
-        className={`mt-4 inline-block px-4 py-2 bg-primary text-white rounded-md cursor-pointer transition-colors ${
-          isUploading ? "opacity-50 cursor-not-allowed" : "hover:bg-primary/90"
+    <>
+      <div
+        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+          isDragging ? "border-primary bg-primary/5" : "border-gray-300"
         }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
-        Select Files
-      </label>
-    </div>
+        {isUploading ? (
+          <Loader2 className="mx-auto h-12 w-12 text-gray-400 animate-spin" />
+        ) : (
+          <Upload className="mx-auto h-12 w-12 text-gray-400" />
+        )}
+        <h3 className="mt-4 text-lg font-medium">Upload Documents</h3>
+        <p className="mt-2 text-sm text-gray-500">
+          {isUploading
+            ? "Uploading files..."
+            : "Drag and drop your files here, or click to select files"}
+        </p>
+        <input
+          type="file"
+          multiple
+          className="hidden"
+          id="file-upload"
+          onChange={handleFileInput}
+          disabled={isUploading}
+        />
+        <label
+          htmlFor="file-upload"
+          className={`mt-4 inline-block px-4 py-2 bg-primary text-white rounded-md cursor-pointer transition-colors ${
+            isUploading ? "opacity-50 cursor-not-allowed" : "hover:bg-primary/90"
+          }`}
+        >
+          Select Files
+        </label>
+      </div>
+      <UploadQueue items={uploadQueue} onCancel={handleCancelUpload} />
+    </>
   );
 };
