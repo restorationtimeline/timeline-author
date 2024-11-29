@@ -19,24 +19,24 @@ const columns = [
   {
     id: "pending",
     title: "Pending",
-    icon: <Clock className="h-5 w-5 text-gray-500" />,
+    icon: <Clock className="h-4 w-4 text-gray-500" />,
   },
   {
     id: "processing",
     title: "Processing",
-    icon: <Clock className="h-5 w-5 text-blue-500 animate-spin" />,
+    icon: <Clock className="h-4 w-4 text-blue-500 animate-spin" />,
   },
   {
     id: "completed",
     title: "Completed",
-    icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+    icon: <CheckCircle className="h-4 w-4 text-green-500" />,
   },
   {
     id: "failed",
     title: "Failed",
-    icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+    icon: <AlertCircle className="h-4 w-4 text-red-500" />,
     action: (failedCount: number) => (
-      <div className="flex gap-4 px-8">
+      <div className="flex gap-2 px-4">
         <Button
           variant="ghost"
           size="sm"
@@ -47,7 +47,7 @@ const columns = [
           }}
           aria-label="Retry failed documents"
         >
-          <RefreshCw className={`h-4 w-4 ${failedCount === 0 ? 'text-gray-300' : 'text-blue-500'}`} />
+          <RefreshCw className={`h-3 w-3 ${failedCount === 0 ? 'text-gray-300' : 'text-blue-500'}`} />
         </Button>
       </div>
     ),
@@ -64,7 +64,7 @@ export const KanbanBoard = () => {
       const { data, error } = await supabase
         .from("documents")
         .select("*")
-        .is('deleted_at', null)  // Only fetch non-deleted documents
+        .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
@@ -108,32 +108,29 @@ export const KanbanBoard = () => {
   const failedDocumentsCount = documents?.filter(doc => doc.status === "failed").length || 0;
 
   return (
-    <div className="grid grid-cols-4 gap-6">
+    <div className="grid grid-cols-4 gap-4">
       {columns.map((column) => (
-        <div key={column.id} className="flex flex-col bg-white p-4 rounded-lg min-h-[600px] shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
+        <div key={column.id} className="flex flex-col bg-white p-3 rounded-lg min-h-[600px] shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1.5">
               {column.icon}
-              <h3 className="font-semibold">{column.title}</h3>
+              <h3 className="text-sm font-medium">{column.title}</h3>
             </div>
             {column.action && column.action(failedDocumentsCount)}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 overflow-auto">
             {documents
               ?.filter((doc) => doc.status === column.id)
               .map((doc) => (
                 <Card
                   key={doc.id}
-                  className="p-4 mb-4 hover:shadow-md transition-shadow cursor-pointer"
+                  className="p-2 mb-2 hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => navigate(`/sources/${doc.id}`)}
                 >
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-primary" />
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-3.5 w-3.5 text-primary" />
                     <div>
-                      <h4 className="font-medium group-hover:text-primary transition-colors">{doc.name}</h4>
-                      <p className="text-sm text-gray-500">
-                        {doc.type} • {new Date(doc.uploaded_at).toLocaleDateString()}
-                      </p>
+                      <h4 className="text-xs font-medium group-hover:text-primary transition-colors">{doc.name}</h4>
                     </div>
                   </div>
                 </Card>
