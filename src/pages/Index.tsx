@@ -118,16 +118,16 @@ const Index = () => {
     >
       <Header />
       <CommandPalette />
-      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col space-y-8">
           <DocumentUpload />
           
-          <div className="flex items-start space-x-8">
-            <div className="w-48">
+          <div className="flex items-start gap-8">
+            <div className="w-48 shrink-0">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Sources</h2>
             </div>
             
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
                 <div className="flex justify-end mb-4">
                   <TabsList>
@@ -145,13 +145,13 @@ const Index = () => {
                     </TabsTrigger>
                   </TabsList>
                 </div>
-                <TabsContent value="grid">
+                <TabsContent value="grid" className="w-full">
                   <DocumentGrid />
                 </TabsContent>
-                <TabsContent value="list">
+                <TabsContent value="list" className="w-full">
                   <DocumentList />
                 </TabsContent>
-                <TabsContent value="kanban">
+                <TabsContent value="kanban" className="w-full">
                   <KanbanBoard />
                 </TabsContent>
               </Tabs>

@@ -38,7 +38,7 @@ const StatusIcon = ({ status }: { status: Document["status"] }) => {
 
 export const DocumentList = () => {
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       {documents.map((doc) => (
         <div
           key={doc.id}
