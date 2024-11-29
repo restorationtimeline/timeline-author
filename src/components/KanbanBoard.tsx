@@ -79,7 +79,7 @@ export const KanbanBoard = () => {
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {columns.map((column) => (
-          <div key={column.id} className="flex flex-col bg-gray-100 p-4 rounded-lg min-h-[600px]">
+          <div key={column.id} className="flex flex-col bg-white p-4 rounded-lg min-h-[600px] shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               {column.icon}
               <h3 className="font-semibold">{column.title}</h3>
