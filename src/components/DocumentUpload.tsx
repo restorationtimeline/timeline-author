@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Upload, Loader2, X } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
@@ -35,6 +35,11 @@ export const DocumentUpload = () => {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     handleFiles(files);
+  };
+
+  const getBaseFileName = (fileName: string) => {
+    // Remove the extension from the file name
+    return fileName.replace(/\.[^/.]+$/, "");
   };
 
   const handleFiles = async (files: File[]) => {
@@ -97,6 +102,19 @@ export const DocumentUpload = () => {
         if (!response.ok) {
           throw new Error(result.error || 'Failed to upload file');
         }
+
+        // Use the base name (without extension) as the document name
+        const baseName = getBaseFileName(file.name);
+        const { error: dbError } = await supabase
+          .from('documents')
+          .insert({
+            name: baseName,
+            type: file.type,
+            status: 'pending',
+            uploaded_by: session.user.id
+          });
+
+        if (dbError) throw dbError;
 
         setUploadProgress(prev => ({
           totalFiles: files.length,
