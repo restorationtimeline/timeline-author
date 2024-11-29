@@ -1,6 +1,8 @@
 import { DocumentUpload } from "@/components/DocumentUpload";
 import { DocumentList } from "@/components/DocumentList";
 import { Header } from "@/components/Header";
+import { KanbanBoard } from "@/components/KanbanBoard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   return (
@@ -19,12 +21,18 @@ const Index = () => {
           
           <DocumentUpload />
           
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Recent Documents
-            </h2>
-            <DocumentList />
-          </div>
+          <Tabs defaultValue="list" className="w-full">
+            <TabsList>
+              <TabsTrigger value="list">List View</TabsTrigger>
+              <TabsTrigger value="kanban">Kanban Board</TabsTrigger>
+            </TabsList>
+            <TabsContent value="list">
+              <DocumentList />
+            </TabsContent>
+            <TabsContent value="kanban">
+              <KanbanBoard />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
