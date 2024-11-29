@@ -6,6 +6,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const getDocumentName = (fileName) => {
+  const lastDotIndex = fileName.lastIndexOf('.');
+  return lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -32,8 +37,9 @@ serve(async (req) => {
     const fileName = `${crypto.randomUUID()}.${fileExt}`
     const filePath = `${fileName}`
 
+
     // Get the document name without extension
-    const documentName = file.name.replace(new RegExp(`\\.${fileExt}$`), '')
+    const documentName = getDocumentName(file.name);
 
     // Upload file to storage
     const { data: storageData, error: uploadError } = await supabase.storage
