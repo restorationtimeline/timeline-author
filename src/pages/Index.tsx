@@ -3,6 +3,7 @@ import { DocumentList } from "@/components/DocumentList";
 import { DocumentGrid } from "@/components/DocumentGrid";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { Header } from "@/components/Header";
+import { CommandPalette } from "@/components/CommandPalette";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Grid2X2, List, Kanban } from "lucide-react";
 
@@ -10,6 +11,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
+      <CommandPalette />
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-8">
           <DocumentUpload />
