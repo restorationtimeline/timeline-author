@@ -121,11 +121,14 @@ const Index = () => {
           <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Sources</h2>
-              <TabsList>
+              <TabsList className="bg-white border">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <TabsTrigger value="grid" className="flex items-center gap-2">
+                      <TabsTrigger 
+                        value="grid" 
+                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                      >
                         <Grid2X2 className="h-4 w-4" />
                         Grid
                       </TabsTrigger>
@@ -137,7 +140,10 @@ const Index = () => {
                   
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <TabsTrigger value="kanban" className="flex items-center gap-2">
+                      <TabsTrigger 
+                        value="kanban" 
+                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                      >
                         <Kanban className="h-4 w-4" />
                         Kanban
                       </TabsTrigger>
@@ -149,7 +155,10 @@ const Index = () => {
                   
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <TabsTrigger value="list" className="flex items-center gap-2">
+                      <TabsTrigger 
+                        value="list" 
+                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                      >
                         <List className="h-4 w-4" />
                         List
                       </TabsTrigger>
