@@ -2,9 +2,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowLeft, Clock, CheckCircle, AlertCircle, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
 const StatusIcon = ({ status }: { status: string }) => {
   switch (status) {
@@ -23,9 +25,11 @@ const SourceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState("");
   const [isHolding, setIsHolding] = useState(false);
   const [holdStartTime, setHoldStartTime] = useState(0);
-  const HOLD_DURATION = 1000; // 1 second hold duration
+  const HOLD_DURATION = 1000;
 
   const { data: document, isLoading } = useQuery({
     queryKey: ["document", id],
@@ -38,6 +42,32 @@ const SourceDetails = () => {
 
       if (error) throw error;
       return data;
+    },
+  });
+
+  const updateNameMutation = useMutation({
+    mutationFn: async (newName: string) => {
+      const { error } = await supabase
+        .from("documents")
+        .update({ name: newName })
+        .eq("id", id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Name updated",
+        description: "The document name has been updated successfully",
+      });
+      setIsEditing(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update the document name",
+        variant: "destructive",
+      });
+      console.error(error);
     },
   });
 
@@ -86,6 +116,17 @@ const SourceDetails = () => {
     return progress;
   };
 
+  const handleStartEditing = () => {
+    setEditedName(document?.name || "");
+    setIsEditing(true);
+  };
+
+  const handleSaveName = () => {
+    if (editedName.trim()) {
+      updateNameMutation.mutate(editedName);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-8">
@@ -119,17 +160,56 @@ const SourceDetails = () => {
         </Button>
 
         <div>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold">{document.name}</h1>
-              <p className="text-gray-500">
-                {document.type || "Document"} • Uploaded on{" "}
-                {new Date(document.uploaded_at).toLocaleDateString()}
-              </p>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 w-full">
+              {isEditing ? (
+                <div className="flex items-center gap-2 w-full">
+                  <Input
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    className="text-2xl font-bold h-auto py-1"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveName();
+                      if (e.key === 'Escape') setIsEditing(false);
+                    }}
+                  />
+                  <Button onClick={handleSaveName}>Save</Button>
+                  <Button variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between w-full">
+                  <h1 className="text-2xl font-bold">{document.name}</h1>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleStartEditing}
+                    className="ml-2"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <StatusIcon status={document.status} />
-              <span className="text-sm font-medium capitalize">{document.status}</span>
+
+            <div className="space-y-2 text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Type:</span>
+                <span>{getFriendlyMimeType(document.type)}</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Uploaded:</span>
+                <span>{new Date(document.uploaded_at).toLocaleDateString()}</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Status:</span>
+                <div className="flex items-center gap-1">
+                  <StatusIcon status={document.status} />
+                  <span className="capitalize">{document.status}</span>
+                </div>
+              </div>
             </div>
           </div>
 
