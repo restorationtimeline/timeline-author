@@ -20,7 +20,7 @@ export const UploadQueue = ({ items, onCancel }: UploadQueueProps) => {
   const overallProgress = (completedCount / totalCount) * 100;
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+    <div className="fixed bottom-4 right-4 w-96 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
       <div className="p-4 border-b border-gray-200">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-medium">
