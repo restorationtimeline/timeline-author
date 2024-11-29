@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "./ui/card";
-import { FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { FileText, Clock, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 type Document = {
@@ -33,6 +33,17 @@ const columns = [
     id: "failed",
     title: "Failed",
     icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+    action: (
+      <button
+        className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+        onClick={() => {
+          toast.info("Retrying failed documents...");
+        }}
+        aria-label="Retry failed documents"
+      >
+        <RefreshCw className="h-4 w-4 text-red-500" />
+      </button>
+    ),
   },
 ];
 
@@ -83,6 +94,7 @@ export const KanbanBoard = () => {
             <div className="flex items-center gap-2 mb-4">
               {column.icon}
               <h3 className="font-semibold">{column.title}</h3>
+              {column.action}
             </div>
             <Droppable droppableId={column.id}>
               {(provided) => (
