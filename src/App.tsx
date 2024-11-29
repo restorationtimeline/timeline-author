@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,7 +15,7 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session && location.pathname !== '/login') {
         navigate('/login');
@@ -30,8 +30,8 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <React.StrictMode>
         <BrowserRouter>
           <TooltipProvider>
             <AuthWrapper>
@@ -45,8 +45,8 @@ const App = () => {
             <Sonner />
           </TooltipProvider>
         </BrowserRouter>
-      </QueryClientProvider>
-    </React.StrictMode>
+      </React.StrictMode>
+    </QueryClientProvider>
   );
 };
 

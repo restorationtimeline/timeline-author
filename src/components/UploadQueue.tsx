@@ -4,7 +4,7 @@ import { Progress } from "./ui/progress";
 export type UploadItem = {
   file: File;
   progress: number;
-  status: 'uploading' | 'completed' | 'waiting';
+  status: 'uploading' | 'completed' | 'waiting' | 'error';
 };
 
 interface UploadQueueProps {
@@ -43,6 +43,8 @@ export const UploadQueue = ({ items, onCancel }: UploadQueueProps) => {
                     ? 'Uploaded'
                     : item.status === 'waiting'
                     ? 'Waiting...'
+                    : item.status === 'error'
+                    ? 'Error'
                     : `${Math.round(item.progress)}%`}
                 </span>
               </div>
