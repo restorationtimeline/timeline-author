@@ -127,6 +127,5 @@ export const KanbanBoard = () => {
         ))}
       </div>
     </DragDropContext>
-  </div>
   );
 };
