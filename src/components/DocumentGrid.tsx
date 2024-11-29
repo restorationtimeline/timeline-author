@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { Card } from "./ui/card";
+import { useNavigate } from "react-router-dom";
 
 type Document = {
   id: string;
@@ -25,6 +26,7 @@ const StatusIcon = ({ status }: { status: Document["status"] }) => {
 };
 
 export const DocumentGrid = () => {
+  const navigate = useNavigate();
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
@@ -45,7 +47,11 @@ export const DocumentGrid = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
       {documents?.map((doc) => (
-        <Card key={doc.id} className="p-4 hover:shadow-md transition-shadow">
+        <Card 
+          key={doc.id} 
+          className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate(`/sources/${doc.id}`)}
+        >
           <div className="flex items-center justify-between mb-3">
             <FileText className="h-6 w-6 text-primary" />
             <StatusIcon status={doc.status} />

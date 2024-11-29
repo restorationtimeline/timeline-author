@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import SourceDetails from "./pages/SourceDetails";
 import { supabase } from "./integrations/supabase/client";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => {
               <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Index />} />
+                <Route path="/sources/:id" element={<SourceDetails />} />
               </Routes>
             </AuthWrapper>
             <Toaster />

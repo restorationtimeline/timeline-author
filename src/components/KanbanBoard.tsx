@@ -5,6 +5,7 @@ import { Card } from "./ui/card";
 import { FileText, Clock, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 type Document = {
   id: string;
@@ -54,6 +55,7 @@ const columns = [
 ];
 
 export const KanbanBoard = () => {
+  const navigate = useNavigate();
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
@@ -126,12 +128,13 @@ export const KanbanBoard = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className="p-4 mb-4 cursor-grab active:cursor-grabbing"
+                            className="p-4 mb-4 cursor-grab active:cursor-grabbing group"
+                            onClick={() => navigate(`/sources/${doc.id}`)}
                           >
                             <div className="flex items-center gap-3">
                               <FileText className="h-5 w-5 text-primary" />
                               <div>
-                                <h4 className="font-medium">{doc.name}</h4>
+                                <h4 className="font-medium group-hover:text-primary transition-colors">{doc.name}</h4>
                                 <p className="text-sm text-gray-500">
                                   {doc.type} • {new Date(doc.uploaded_at).toLocaleDateString()}
                                 </p>

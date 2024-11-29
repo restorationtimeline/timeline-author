@@ -1,6 +1,7 @@
 import { FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 type Document = {
   id: string;
@@ -37,6 +38,7 @@ const StatusLabel = ({ status }: { status: Document["status"] }) => {
 };
 
 export const DocumentList = () => {
+  const navigate = useNavigate();
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
@@ -86,7 +88,8 @@ export const DocumentList = () => {
               {docs.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-4 bg-white rounded-lg shadow-sm border animate-fade-up hover:shadow-md transition-shadow"
+                  className="p-4 bg-white rounded-lg shadow-sm border animate-fade-up hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => navigate(`/sources/${doc.id}`)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
