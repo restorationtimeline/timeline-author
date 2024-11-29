@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, Check, X } from "lucide-react";
 
 type EditableTitleProps = {
   initialValue: string;
@@ -32,8 +32,12 @@ export const EditableTitle = ({ initialValue, onSave }: EditableTitleProps) => {
             if (e.key === 'Escape') setIsEditing(false);
           }}
         />
-        <Button onClick={handleSave}>Save</Button>
-        <Button variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
+        <Button size="icon" onClick={handleSave}>
+          <Check className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => setIsEditing(false)}>
+          <X className="h-4 w-4" />
+        </Button>
       </div>
     );
   }
