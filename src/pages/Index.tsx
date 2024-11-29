@@ -8,6 +8,7 @@ import { Grid2X2, List, Kanban } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("grid");
@@ -121,18 +122,43 @@ const Index = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Sources</h2>
               <TabsList>
-                <TabsTrigger value="grid" className="flex items-center gap-2">
-                  <Grid2X2 className="h-4 w-4" />
-                  Grid
-                </TabsTrigger>
-                <TabsTrigger value="kanban" className="flex items-center gap-2">
-                  <Kanban className="h-4 w-4" />
-                  Kanban
-                </TabsTrigger>
-                <TabsTrigger value="list" className="flex items-center gap-2">
-                  <List className="h-4 w-4" />
-                  List
-                </TabsTrigger>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="grid" className="flex items-center gap-2">
+                        <Grid2X2 className="h-4 w-4" />
+                        Grid
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Grid View (⌘J)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="kanban" className="flex items-center gap-2">
+                        <Kanban className="h-4 w-4" />
+                        Kanban
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Kanban View (⌘K)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="list" className="flex items-center gap-2">
+                        <List className="h-4 w-4" />
+                        List
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>List View (⌘L)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </TabsList>
             </div>
             
