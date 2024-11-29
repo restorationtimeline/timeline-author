@@ -61,50 +61,66 @@ export const DocumentUpload = () => {
       }
 
       for (const [index, file] of files.entries()) {
-        // Update status to uploading
-        setUploadQueue(prev => prev.map(item => 
-          item.file === file 
-            ? { ...item, status: 'uploading' as const }
-            : item
-        ));
+        try {
+          // Update status to uploading
+          setUploadQueue(prev => prev.map(item => 
+            item.file === file 
+              ? { ...item, status: 'uploading' as const }
+              : item
+          ));
 
-        const formData = new FormData();
-        formData.append('file', file);
+          // Upload file to Supabase Storage first
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${crypto.randomUUID()}.${fileExt}`;
+          
+          const { data: storageData, error: uploadError } = await supabase.storage
+            .from('documents')
+            .upload(fileName, file, {
+              contentType: file.type,
+              upsert: false
+            });
 
-        const response = await fetch('/api/upload-document', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-          },
-        });
+          if (uploadError) throw uploadError;
 
-        const result = await response.json();
+          // Get the base name without extension
+          const baseName = getBaseFileName(file.name);
+          
+          // Create document record in the database
+          const { error: dbError } = await supabase
+            .from('documents')
+            .insert({
+              name: baseName,
+              type: file.type,
+              status: 'pending',
+              uploaded_by: session.user.id,
+              identifiers: {
+                storage_path: fileName
+              }
+            });
 
-        if (!response.ok) {
-          throw new Error(result.error || 'Failed to upload file');
-        }
+          if (dbError) throw dbError;
 
-        // Get the base name without extension
-        const baseName = getBaseFileName(file.name);
-        
-        const { error: dbError } = await supabase
-          .from('documents')
-          .insert({
-            name: baseName,
-            type: file.type,
-            status: 'pending',
-            uploaded_by: session.user.id
+          // Update progress and status
+          setUploadQueue(prev => prev.map(item => 
+            item.file === file 
+              ? { ...item, progress: 100, status: 'completed' as const }
+              : item
+          ));
+
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          setUploadQueue(prev => prev.map(item => 
+            item.file === file 
+              ? { ...item, status: 'waiting' as const }
+              : item
+          ));
+          
+          toast({
+            title: "Error",
+            description: `Failed to upload ${file.name}: ${error.message}`,
+            variant: "destructive",
           });
-
-        if (dbError) throw dbError;
-
-        // Update progress and status
-        setUploadQueue(prev => prev.map(item => 
-          item.file === file 
-            ? { ...item, progress: 100, status: 'completed' as const }
-            : item
-        ));
+        }
       }
 
       // Show success toast
