@@ -1,4 +1,3 @@
-import { DocumentUpload } from "@/components/DocumentUpload";
 import { DocumentList } from "@/components/DocumentList";
 import { DocumentGrid } from "@/components/DocumentGrid";
 import { KanbanBoard } from "@/components/KanbanBoard";
@@ -72,7 +71,6 @@ const Index = () => {
         const fileExt = file.name.split('.').pop();
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
-        // Upload file to storage
         const { error: uploadError } = await supabase.storage
           .from('documents')
           .upload(fileName, file, {
@@ -82,7 +80,6 @@ const Index = () => {
 
         if (uploadError) throw uploadError;
 
-        // Create document record
         const { error: dbError } = await supabase
           .from('documents')
           .insert({
@@ -120,8 +117,6 @@ const Index = () => {
       <CommandPalette />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col space-y-8">
-          <DocumentUpload />
-          
           <div className="flex items-start gap-8">
             <div className="w-48 shrink-0">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Sources</h2>
