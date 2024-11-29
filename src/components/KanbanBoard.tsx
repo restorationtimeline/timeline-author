@@ -35,7 +35,7 @@ const columns = [
     title: "Failed",
     icon: <AlertCircle className="h-5 w-5 text-red-500" />,
     action: (failedCount: number) => (
-      <div className="flex gap-2">
+      <div className="flex gap-4 px-8">
         <Button
           variant="ghost"
           size="sm"
