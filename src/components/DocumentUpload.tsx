@@ -32,7 +32,8 @@ export const DocumentUpload = () => {
   };
 
   const getBaseFileName = (fileName: string) => {
-    return fileName.replace(/\.[^/.]+$/, "");
+    const lastDotIndex = fileName.lastIndexOf('.');
+    return lastDotIndex === -1 ? fileName : fileName.substring(0, lastDotIndex);
   };
 
   const handleFiles = async (files: File[]) => {
@@ -84,7 +85,9 @@ export const DocumentUpload = () => {
           throw new Error(result.error || 'Failed to upload file');
         }
 
+        // Get the base name without extension
         const baseName = getBaseFileName(file.name);
+        
         const { error: dbError } = await supabase
           .from('documents')
           .insert({
