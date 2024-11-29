@@ -49,6 +49,7 @@ export const DocumentList = () => {
       const { data, error } = await supabase
         .from("documents")
         .select("*")
+        .is('deleted_at', null)  // Only fetch non-deleted documents
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
