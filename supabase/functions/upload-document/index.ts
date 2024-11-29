@@ -32,6 +32,9 @@ serve(async (req) => {
     const fileName = `${crypto.randomUUID()}.${fileExt}`
     const filePath = `${fileName}`
 
+    // Get the document name without extension
+    const documentName = file.name.replace(new RegExp(`\\.${fileExt}$`), '')
+
     // Upload file to storage
     const { data: storageData, error: uploadError } = await supabase.storage
       .from('documents')
@@ -65,11 +68,11 @@ serve(async (req) => {
       )
     }
 
-    // Insert document record
+    // Insert document record with name without extension
     const { data: document, error: dbError } = await supabase
       .from('documents')
       .insert({
-        name: file.name,
+        name: documentName,
         type: file.type,
         uploaded_by: user.id,
         status: 'pending',
