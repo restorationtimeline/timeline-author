@@ -9,11 +9,14 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { UploadQueue } from "@/components/UploadQueue";
+import { useUploadQueueStore } from "@/stores/uploadQueueStore";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("grid");
   const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
+  const uploadQueue = useUploadQueueStore(state => state.items);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -170,6 +173,12 @@ const Index = () => {
                 </TooltipProvider>
               </TabsList>
             </div>
+            
+            {uploadQueue.length > 0 && (
+              <div className="mb-6 p-4 border rounded-lg bg-white shadow-sm">
+                <UploadQueue items={uploadQueue} />
+              </div>
+            )}
             
             <TabsContent value="grid" className="w-full mt-0">
               <DocumentGrid />
