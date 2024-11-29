@@ -4,6 +4,7 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "./ui/card";
 import { FileText, Clock, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "./ui/button";
 
 type Document = {
   id: string;
@@ -33,16 +34,28 @@ const columns = [
     id: "failed",
     title: "Failed",
     icon: <AlertCircle className="h-5 w-5 text-red-500" />,
-    action: (
-      <button
-        className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-        onClick={() => {
-          toast.info("Retrying failed documents...");
-        }}
-        aria-label="Retry failed documents"
-      >
-        <RefreshCw className="h-4 w-4 text-red-500" />
-      </button>
+    action: (failedCount: number) => (
+      <div className="flex gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          disabled={failedCount === 0}
+          onClick={() => {
+            toast.info("Retrying failed documents...");
+          }}
+          aria-label="Retry failed documents"
+        >
+          <RefreshCw className={`h-4 w-4 ${failedCount === 0 ? 'text-gray-300' : 'text-blue-500'}`} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <FileText className="h-4 w-4 text-gray-500" />
+        </Button>
+      </div>
     ),
   },
 ];
@@ -86,6 +99,8 @@ export const KanbanBoard = () => {
     return <div>Loading...</div>;
   }
 
+  const failedDocumentsCount = documents?.filter(doc => doc.status === "failed").length || 0;
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-4 gap-4">
@@ -96,7 +111,7 @@ export const KanbanBoard = () => {
                 {column.icon}
                 <h3 className="font-semibold">{column.title}</h3>
               </div>
-              {column.action}
+              {column.action && column.action(failedDocumentsCount)}
             </div>
             <Droppable droppableId={column.id}>
               {(provided) => (
