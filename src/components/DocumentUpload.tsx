@@ -1,11 +1,19 @@
 import { useState } from "react";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Progress } from "@/components/ui/progress";
+
+interface UploadProgress {
+  totalFiles: number;
+  completedFiles: number;
+  currentFileName: string;
+}
 
 export const DocumentUpload = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
   const { toast } = useToast();
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -33,6 +41,12 @@ export const DocumentUpload = () => {
     if (files.length === 0) return;
 
     setIsUploading(true);
+    setUploadProgress({
+      totalFiles: files.length,
+      completedFiles: 0,
+      currentFileName: files[0].name,
+    });
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -44,7 +58,29 @@ export const DocumentUpload = () => {
         return;
       }
 
-      for (const file of files) {
+      // Show the upload progress toast
+      toast({
+        title: "Uploading files",
+        description: (
+          <div className="w-full">
+            <div className="flex justify-between mb-2">
+              <span className="text-sm text-gray-500">
+                {uploadProgress?.currentFileName}
+              </span>
+              <span className="text-sm text-gray-500">
+                {uploadProgress?.completedFiles}/{uploadProgress?.totalFiles} files
+              </span>
+            </div>
+            <Progress 
+              value={(uploadProgress?.completedFiles || 0) / files.length * 100} 
+              className="h-2"
+            />
+          </div>
+        ),
+        duration: Infinity,
+      });
+
+      for (const [index, file] of files.entries()) {
         const formData = new FormData();
         formData.append('file', file);
 
@@ -62,11 +98,18 @@ export const DocumentUpload = () => {
           throw new Error(result.error || 'Failed to upload file');
         }
 
-        toast({
-          title: "Success",
-          description: `Uploaded: ${file.name}`,
-        });
+        setUploadProgress(prev => ({
+          totalFiles: files.length,
+          completedFiles: (prev?.completedFiles || 0) + 1,
+          currentFileName: index < files.length - 1 ? files[index + 1].name : file.name,
+        }));
       }
+
+      // Show success toast
+      toast({
+        title: "Success",
+        description: `Uploaded ${files.length} file${files.length > 1 ? 's' : ''}`,
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -75,6 +118,7 @@ export const DocumentUpload = () => {
       });
     } finally {
       setIsUploading(false);
+      setUploadProgress(null);
     }
   };
 
