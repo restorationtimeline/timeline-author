@@ -18,7 +18,7 @@ const Index = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey) {
         switch (e.key) {
-          case "g":
+          case "j":
             e.preventDefault();
             setActiveView("grid");
             break;
@@ -125,13 +125,13 @@ const Index = () => {
                   <Grid2X2 className="h-4 w-4" />
                   Grid
                 </TabsTrigger>
-                <TabsTrigger value="list" className="flex items-center gap-2">
-                  <List className="h-4 w-4" />
-                  List
-                </TabsTrigger>
                 <TabsTrigger value="kanban" className="flex items-center gap-2">
                   <Kanban className="h-4 w-4" />
                   Kanban
+                </TabsTrigger>
+                <TabsTrigger value="list" className="flex items-center gap-2">
+                  <List className="h-4 w-4" />
+                  List
                 </TabsTrigger>
               </TabsList>
             </div>
