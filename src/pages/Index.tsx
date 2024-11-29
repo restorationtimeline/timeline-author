@@ -4,7 +4,7 @@ import { DocumentGrid } from "@/components/DocumentGrid";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { Header } from "@/components/Header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Grid2X2, List, LayoutKanban } from "lucide-react";
+import { Grid2X2, List, Kanban } from "lucide-react";
 
 const Index = () => {
   return (
@@ -34,7 +34,7 @@ const Index = () => {
                 List View
               </TabsTrigger>
               <TabsTrigger value="kanban" className="flex items-center gap-2">
-                <LayoutKanban className="h-4 w-4" />
+                <Kanban className="h-4 w-4" />
                 Kanban Board
               </TabsTrigger>
             </TabsList>
