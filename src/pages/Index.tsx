@@ -127,7 +127,7 @@ const Index = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="grid" 
-                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
                       >
                         <Grid2X2 className="h-4 w-4" />
                         Grid
@@ -142,7 +142,7 @@ const Index = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="kanban" 
-                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
                       >
                         <Kanban className="h-4 w-4" />
                         Kanban
@@ -157,7 +157,7 @@ const Index = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="list" 
-                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
                       >
                         <List className="h-4 w-4" />
                         List
