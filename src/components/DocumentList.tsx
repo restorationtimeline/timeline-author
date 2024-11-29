@@ -23,6 +23,19 @@ const StatusIcon = ({ status }: { status: Document["status"] }) => {
   }
 };
 
+const StatusLabel = ({ status }: { status: Document["status"] }) => {
+  switch (status) {
+    case "processing":
+      return "Processing";
+    case "completed":
+      return "Completed";
+    case "failed":
+      return "Failed";
+    default:
+      return "Pending";
+  }
+};
+
 export const DocumentList = () => {
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents"],
@@ -45,28 +58,55 @@ export const DocumentList = () => {
     );
   }
 
+  const groupedDocuments = documents?.reduce((acc, doc) => {
+    if (!acc[doc.status]) {
+      acc[doc.status] = [];
+    }
+    acc[doc.status].push(doc);
+    return acc;
+  }, {} as Record<Document["status"], Document[]>);
+
+  const statusOrder: Document["status"][] = ["processing", "pending", "completed", "failed"];
+
   return (
-    <div className="w-full space-y-4">
-      {documents?.map((doc) => (
-        <div
-          key={doc.id}
-          className="p-4 bg-white rounded-lg shadow-sm border animate-fade-up hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <FileText className="h-6 w-6 text-primary" />
-              <div>
-                <h3 className="font-medium text-gray-900">{doc.name}</h3>
-                <p className="text-sm text-gray-500">
-                  {doc.type || "Document"} • Uploaded on{" "}
-                  {new Date(doc.uploaded_at).toLocaleDateString()}
-                </p>
-              </div>
+    <div className="w-full space-y-8">
+      {statusOrder.map((status) => {
+        const docs = groupedDocuments?.[status] || [];
+        if (docs.length === 0) return null;
+
+        return (
+          <div key={status} className="space-y-4">
+            <div className="flex items-center gap-2">
+              <StatusIcon status={status} />
+              <h2 className="text-lg font-semibold text-gray-900">
+                {StatusLabel({ status })} ({docs.length})
+              </h2>
             </div>
-            <StatusIcon status={doc.status} />
+            <div className="space-y-4">
+              {docs.map((doc) => (
+                <div
+                  key={doc.id}
+                  className="p-4 bg-white rounded-lg shadow-sm border animate-fade-up hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <FileText className="h-6 w-6 text-primary" />
+                      <div>
+                        <h3 className="font-medium text-gray-900">{doc.name}</h3>
+                        <p className="text-sm text-gray-500">
+                          {doc.type || "Document"} • Uploaded on{" "}
+                          {new Date(doc.uploaded_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <StatusIcon status={doc.status} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
