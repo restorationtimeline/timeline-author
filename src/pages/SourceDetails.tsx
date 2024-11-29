@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowLeft, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -119,17 +119,14 @@ const SourceDetails = () => {
           Back
         </Button>
 
-        <Card className="p-6">
+        <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <FileText className="h-8 w-8 text-primary" />
-              <div>
-                <h1 className="text-2xl font-bold">{document.name}</h1>
-                <p className="text-gray-500">
-                  {document.type || "Document"} • Uploaded on{" "}
-                  {new Date(document.uploaded_at).toLocaleDateString()}
-                </p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-bold">{document.name}</h1>
+              <p className="text-gray-500">
+                {document.type || "Document"} • Uploaded on{" "}
+                {new Date(document.uploaded_at).toLocaleDateString()}
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <StatusIcon status={document.status} />
@@ -147,7 +144,7 @@ const SourceDetails = () => {
               </ul>
             </div>
           )}
-        </Card>
+        </div>
 
         <div className="mt-6">
           <Button
