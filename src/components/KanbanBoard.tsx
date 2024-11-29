@@ -1,6 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "./ui/card";
 import { FileText, Clock, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -101,27 +100,6 @@ export const KanbanBoard = () => {
     };
   }, [queryClient]);
 
-  const handleDragEnd = async (result: any) => {
-    if (!result.destination) return;
-
-    const { draggableId, destination } = result;
-    const newStatus = destination.droppableId;
-
-    try {
-      const { error } = await supabase
-        .from("documents")
-        .update({ status: newStatus })
-        .eq("id", draggableId);
-
-      if (error) throw error;
-      
-      toast.success("Document status updated successfully");
-    } catch (error) {
-      console.error("Error updating document status:", error);
-      toast.error("Failed to update document status");
-    }
-  };
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -129,60 +107,39 @@ export const KanbanBoard = () => {
   const failedDocumentsCount = documents?.filter(doc => doc.status === "failed").length || 0;
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-4 gap-6">
-        {columns.map((column) => (
-          <div key={column.id} className="flex flex-col bg-white p-4 rounded-lg min-h-[600px] shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                {column.icon}
-                <h3 className="font-semibold">{column.title}</h3>
-              </div>
-              {column.action && column.action(failedDocumentsCount)}
+    <div className="grid grid-cols-4 gap-6">
+      {columns.map((column) => (
+        <div key={column.id} className="flex flex-col bg-white p-4 rounded-lg min-h-[600px] shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              {column.icon}
+              <h3 className="font-semibold">{column.title}</h3>
             </div>
-            <Droppable droppableId={column.id}>
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="flex-1"
-                >
-                  {documents
-                    ?.filter((doc) => doc.status === column.id)
-                    .map((doc, index) => (
-                      <Draggable
-                        key={doc.id}
-                        draggableId={doc.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <Card
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="p-4 mb-4 cursor-grab active:cursor-grabbing group"
-                            onClick={() => navigate(`/sources/${doc.id}`)}
-                          >
-                            <div className="flex items-center gap-3">
-                              <FileText className="h-5 w-5 text-primary" />
-                              <div>
-                                <h4 className="font-medium group-hover:text-primary transition-colors">{doc.name}</h4>
-                                <p className="text-sm text-gray-500">
-                                  {doc.type} • {new Date(doc.uploaded_at).toLocaleDateString()}
-                                </p>
-                              </div>
-                            </div>
-                          </Card>
-                        )}
-                      </Draggable>
-                    ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
+            {column.action && column.action(failedDocumentsCount)}
           </div>
-        ))}
-      </div>
-    </DragDropContext>
+          <div className="flex-1">
+            {documents
+              ?.filter((doc) => doc.status === column.id)
+              .map((doc) => (
+                <Card
+                  key={doc.id}
+                  className="p-4 mb-4 hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => navigate(`/sources/${doc.id}`)}
+                >
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <div>
+                      <h4 className="font-medium group-hover:text-primary transition-colors">{doc.name}</h4>
+                      <p className="text-sm text-gray-500">
+                        {doc.type} • {new Date(doc.uploaded_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
