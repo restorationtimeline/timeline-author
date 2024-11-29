@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 
@@ -29,9 +29,9 @@ export const Header = () => {
   return (
     <header className="w-full h-10 bg-primary border-b border-border/40 shadow-sm">
       <div className="container h-full flex items-center justify-between">
-        <div className="text-primary-foreground font-semibold">
+        <Link to="/" className="text-primary-foreground font-semibold hover:text-primary-foreground/90 transition-colors">
           Restoration Timeline
-        </div>
+        </Link>
         <div className="flex items-center gap-4">
           <NavigationMenu>
             <NavigationMenuList>
