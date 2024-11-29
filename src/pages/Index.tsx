@@ -119,34 +119,44 @@ const Index = () => {
       <Header />
       <CommandPalette />
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="space-y-8">
+        <div className="flex flex-col space-y-8">
           <DocumentUpload />
           
-          <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
-            <TabsList className="mb-4">
-              <TabsTrigger value="grid" className="flex items-center gap-2">
-                <Grid2X2 className="h-4 w-4" />
-                Grid View
-              </TabsTrigger>
-              <TabsTrigger value="list" className="flex items-center gap-2">
-                <List className="h-4 w-4" />
-                List View
-              </TabsTrigger>
-              <TabsTrigger value="kanban" className="flex items-center gap-2">
-                <Kanban className="h-4 w-4" />
-                Kanban Board
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="grid">
-              <DocumentGrid />
-            </TabsContent>
-            <TabsContent value="list">
-              <DocumentList />
-            </TabsContent>
-            <TabsContent value="kanban">
-              <KanbanBoard />
-            </TabsContent>
-          </Tabs>
+          <div className="flex items-start space-x-8">
+            <div className="w-48">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Sources</h2>
+            </div>
+            
+            <div className="flex-1">
+              <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
+                <div className="flex justify-end mb-4">
+                  <TabsList>
+                    <TabsTrigger value="grid" className="flex items-center gap-2">
+                      <Grid2X2 className="h-4 w-4" />
+                      Grid
+                    </TabsTrigger>
+                    <TabsTrigger value="list" className="flex items-center gap-2">
+                      <List className="h-4 w-4" />
+                      List
+                    </TabsTrigger>
+                    <TabsTrigger value="kanban" className="flex items-center gap-2">
+                      <Kanban className="h-4 w-4" />
+                      Kanban
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="grid">
+                  <DocumentGrid />
+                </TabsContent>
+                <TabsContent value="list">
+                  <DocumentList />
+                </TabsContent>
+                <TabsContent value="kanban">
+                  <KanbanBoard />
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
         </div>
       </div>
     </div>
