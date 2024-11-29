@@ -27,7 +27,7 @@ const Index = () => {
             e.preventDefault();
             setActiveView("list");
             break;
-          case "b":
+          case "k":
             e.preventDefault();
             setActiveView("kanban");
             break;

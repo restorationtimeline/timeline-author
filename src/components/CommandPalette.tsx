@@ -85,7 +85,7 @@ export const CommandPalette = () => {
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === " ") {
         e.preventDefault();
         setOpen((open) => !open);
       }
