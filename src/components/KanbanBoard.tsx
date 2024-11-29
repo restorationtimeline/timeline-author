@@ -35,7 +35,7 @@ const columns = [
     title: "Failed",
     icon: <AlertCircle className="h-5 w-5 text-red-500" />,
     action: (failedCount: number) => (
-      <div className="flex gap-2 w-28">
+      <div className="flex gap-4 px-8">
         <Button
           variant="ghost"
           size="sm"
@@ -104,11 +104,7 @@ export const KanbanBoard = () => {
                 {column.icon}
                 <h3 className="font-semibold">{column.title}</h3>
               </div>
-              {column.action && (
-                <div className="flex gap-4">
-                  {column.action(failedDocumentsCount)}
-                </div>
-              )}
+              {column.action && column.action(failedDocumentsCount)}
             </div>
             <Droppable droppableId={column.id}>
               {(provided) => (
