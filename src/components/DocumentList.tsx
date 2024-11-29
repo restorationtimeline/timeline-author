@@ -50,7 +50,7 @@ export const DocumentList = () => {
       const { data, error } = await supabase
         .from("documents")
         .select("*")
-        .is('deleted_at', null)  // Only fetch non-deleted documents
+        .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
@@ -70,14 +70,6 @@ export const DocumentList = () => {
         },
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ['documents'] });
-          
-          const eventMessages = {
-            INSERT: 'New document added',
-            UPDATE: 'Document updated',
-            DELETE: 'Document removed'
-          };
-          
-          toast.info(eventMessages[payload.eventType as keyof typeof eventMessages]);
         }
       )
       .subscribe();
