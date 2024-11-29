@@ -1,22 +1,17 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
 import { DocumentMetadata } from "@/components/DocumentMetadata";
 import { EditableTitle } from "@/components/EditableTitle";
 import { Header } from "@/components/Header";
+import { DeleteButton } from "@/components/source-details/DeleteButton";
+import { ErrorLogs } from "@/components/source-details/ErrorLogs";
 
 const SourceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [isHolding, setIsHolding] = useState(false);
-  const [holdStartTime, setHoldStartTime] = useState(0);
-  const HOLD_DURATION = 1000;
 
   const { data: document, isLoading, error } = useQuery({
     queryKey: ["document", id],
@@ -35,76 +30,6 @@ const SourceDetails = () => {
     },
     retry: 1,
   });
-
-  const updateNameMutation = useMutation({
-    mutationFn: async (newName: string) => {
-      const { error } = await supabase
-        .from("documents")
-        .update({ name: newName })
-        .eq("id", id);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["document", id] });
-      toast({
-        title: "Name updated",
-        description: "The document name has been updated successfully",
-      });
-    },
-    onError: (error) => {
-      console.error("Update error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update the document name",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase
-        .from("documents")
-        .update({ deleted_at: new Date().toISOString() })
-        .eq("id", id);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Source deleted",
-        description: "The source has been successfully deleted",
-      });
-      navigate("/");
-    },
-    onError: (error) => {
-      console.error("Delete error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the source",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleHoldStart = () => {
-    setIsHolding(true);
-    setHoldStartTime(Date.now());
-  };
-
-  const handleHoldEnd = () => {
-    if (isHolding && Date.now() - holdStartTime >= HOLD_DURATION) {
-      deleteMutation.mutate();
-    }
-    setIsHolding(false);
-    setHoldStartTime(0);
-  };
-
-  const getHoldProgress = () => {
-    if (!isHolding) return 0;
-    return Math.min((Date.now() - holdStartTime) / HOLD_DURATION * 100, 100);
-  };
 
   if (isLoading) {
     return (
@@ -162,39 +87,21 @@ const SourceDetails = () => {
           <div className="space-y-6">
             <EditableTitle
               initialValue={document.name}
-              onSave={(newName) => updateNameMutation.mutateAsync(newName)}
+              onSave={async (newName) => {
+                const { error } = await supabase
+                  .from("documents")
+                  .update({ name: newName })
+                  .eq("id", id);
+                
+                if (error) throw error;
+              }}
             />
 
             <DocumentMetadata document={document} />
-
-            {document.error_logs && document.error_logs.length > 0 && (
-              <div className="mt-6 p-4 bg-red-50 rounded-lg">
-                <h3 className="text-red-800 font-medium mb-2">Error Logs</h3>
-                <ul className="list-disc list-inside space-y-1">
-                  {document.error_logs.map((error, index) => (
-                    <li key={index} className="text-red-600 text-sm">{error}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <ErrorLogs errors={document.error_logs} />
 
             <div className="mt-6">
-              <Button
-                variant="destructive"
-                size="lg"
-                className="w-full h-16 relative overflow-hidden touch-none"
-                onPointerDown={handleHoldStart}
-                onPointerUp={handleHoldEnd}
-                onPointerLeave={handleHoldEnd}
-              >
-                <div
-                  className="absolute left-0 bottom-0 h-1 bg-red-300 transition-all duration-100"
-                  style={{ width: `${getHoldProgress()}%` }}
-                />
-                <span className="relative z-10">
-                  {isHolding ? "Hold to delete..." : "Delete Source"}
-                </span>
-              </Button>
+              <DeleteButton documentId={document.id} />
             </div>
           </div>
         </div>
