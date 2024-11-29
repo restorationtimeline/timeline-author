@@ -3,7 +3,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, CheckCircle, AlertCircle } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
@@ -119,7 +118,7 @@ const SourceDetails = () => {
           Back
         </Button>
 
-        <div className="p-6">
+        <div>
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold">{document.name}</h1>
