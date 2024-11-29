@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { DocumentMetadata } from "@/components/DocumentMetadata";
 import { EditableTitle } from "@/components/EditableTitle";
+import { Header } from "@/components/Header";
 
 const SourceDetails = () => {
   const { id } = useParams();
@@ -107,10 +108,13 @@ const SourceDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto">
-        <div className="animate-pulse space-y-4 max-w-2xl mx-auto">
-          <div className="h-8 w-48 bg-gray-200 rounded"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+      <div>
+        <Header />
+        <div className="container mx-auto">
+          <div className="animate-pulse space-y-4 max-w-2xl mx-auto">
+            <div className="h-8 w-48 bg-gray-200 rounded"></div>
+            <div className="h-32 bg-gray-200 rounded"></div>
+          </div>
         </div>
       </div>
     );
@@ -118,71 +122,80 @@ const SourceDetails = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto py-8 max-w-2xl">
-        <h1 className="text-2xl font-bold mb-4 text-red-500">Error loading source</h1>
-        <p className="text-gray-600 mb-4">There was an error loading the document details.</p>
-        <Button onClick={() => navigate(-1)}>Go Back</Button>
+      <div>
+        <Header />
+        <div className="container mx-auto py-8 max-w-2xl">
+          <h1 className="text-2xl font-bold mb-4 text-red-500">Error loading source</h1>
+          <p className="text-gray-600 mb-4">There was an error loading the document details.</p>
+          <Button onClick={() => navigate(-1)}>Go Back</Button>
+        </div>
       </div>
     );
   }
 
   if (!document) {
     return (
-      <div className="container mx-auto py-8 max-w-2xl">
-        <h1 className="text-2xl font-bold mb-4">Source not found</h1>
-        <Button onClick={() => navigate(-1)}>Go Back</Button>
+      <div>
+        <Header />
+        <div className="container mx-auto py-8 max-w-2xl">
+          <h1 className="text-2xl font-bold mb-4">Source not found</h1>
+          <Button onClick={() => navigate(-1)}>Go Back</Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto">
-      <div className="max-w-2xl mx-auto">
-        <Button
-          variant="ghost"
-          className="mb-6"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
+    <div>
+      <Header />
+      <div className="container mx-auto">
+        <div className="max-w-2xl mx-auto">
+          <Button
+            variant="ghost"
+            className="mb-6"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
 
-        <div className="space-y-6">
-          <EditableTitle
-            initialValue={document.name}
-            onSave={(newName) => updateNameMutation.mutateAsync(newName)}
-          />
+          <div className="space-y-6">
+            <EditableTitle
+              initialValue={document.name}
+              onSave={(newName) => updateNameMutation.mutateAsync(newName)}
+            />
 
-          <DocumentMetadata document={document} />
+            <DocumentMetadata document={document} />
 
-          {document.error_logs && document.error_logs.length > 0 && (
-            <div className="mt-6 p-4 bg-red-50 rounded-lg">
-              <h3 className="text-red-800 font-medium mb-2">Error Logs</h3>
-              <ul className="list-disc list-inside space-y-1">
-                {document.error_logs.map((error, index) => (
-                  <li key={index} className="text-red-600 text-sm">{error}</li>
-                ))}
-              </ul>
+            {document.error_logs && document.error_logs.length > 0 && (
+              <div className="mt-6 p-4 bg-red-50 rounded-lg">
+                <h3 className="text-red-800 font-medium mb-2">Error Logs</h3>
+                <ul className="list-disc list-inside space-y-1">
+                  {document.error_logs.map((error, index) => (
+                    <li key={index} className="text-red-600 text-sm">{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="mt-6">
+              <Button
+                variant="destructive"
+                size="lg"
+                className="w-full h-16 relative overflow-hidden touch-none"
+                onPointerDown={handleHoldStart}
+                onPointerUp={handleHoldEnd}
+                onPointerLeave={handleHoldEnd}
+              >
+                <div
+                  className="absolute left-0 bottom-0 h-1 bg-red-300 transition-all duration-100"
+                  style={{ width: `${getHoldProgress()}%` }}
+                />
+                <span className="relative z-10">
+                  {isHolding ? "Hold to delete..." : "Delete Source"}
+                </span>
+              </Button>
             </div>
-          )}
-
-          <div className="mt-6">
-            <Button
-              variant="destructive"
-              size="lg"
-              className="w-full h-16 relative overflow-hidden touch-none"
-              onPointerDown={handleHoldStart}
-              onPointerUp={handleHoldEnd}
-              onPointerLeave={handleHoldEnd}
-            >
-              <div
-                className="absolute left-0 bottom-0 h-1 bg-red-300 transition-all duration-100"
-                style={{ width: `${getHoldProgress()}%` }}
-              />
-              <span className="relative z-10">
-                {isHolding ? "Hold to delete..." : "Delete Source"}
-              </span>
-            </Button>
           </div>
         </div>
       </div>
