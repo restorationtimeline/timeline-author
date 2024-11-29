@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
 type Document = {
   id: string;
@@ -131,7 +132,7 @@ export const DocumentList = () => {
                       <div>
                         <h3 className="font-medium text-gray-900">{doc.name}</h3>
                         <p className="text-sm text-gray-500">
-                          {doc.type || "Document"} • Uploaded on{" "}
+                          {getFriendlyMimeType(doc.type)} • Uploaded on{" "}
                           {new Date(doc.uploaded_at).toLocaleDateString()}
                         </p>
                       </div>

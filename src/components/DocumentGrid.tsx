@@ -5,6 +5,7 @@ import { Card } from "./ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
 type Document = {
   id: string;
@@ -92,7 +93,7 @@ export const DocumentGrid = () => {
           </div>
           <h3 className="font-medium text-lg mb-2">{doc.name}</h3>
           <p className="text-sm text-gray-500">
-            {doc.type} • {new Date(doc.uploaded_at).toLocaleDateString()}
+            {getFriendlyMimeType(doc.type)} • {new Date(doc.uploaded_at).toLocaleDateString()}
           </p>
         </Card>
       ))}
