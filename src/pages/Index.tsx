@@ -6,8 +6,36 @@ import { Header } from "@/components/Header";
 import { CommandPalette } from "@/components/CommandPalette";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Grid2X2, List, Kanban } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Index = () => {
+  const [activeView, setActiveView] = useState("grid");
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if Command (Mac) or Control (Windows) key is pressed
+      if (e.metaKey || e.ctrlKey) {
+        switch (e.key) {
+          case "g":
+            e.preventDefault();
+            setActiveView("grid");
+            break;
+          case "l":
+            e.preventDefault();
+            setActiveView("list");
+            break;
+          case "b":
+            e.preventDefault();
+            setActiveView("kanban");
+            break;
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
@@ -16,7 +44,7 @@ const Index = () => {
         <div className="space-y-8">
           <DocumentUpload />
           
-          <Tabs defaultValue="grid" className="w-full">
+          <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="grid" className="flex items-center gap-2">
                 <Grid2X2 className="h-4 w-4" />
