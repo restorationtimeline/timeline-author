@@ -39,7 +39,7 @@ const columns = [
         <Button
           variant="ghost"
           size="sm"
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1 hover:bg-gray-100 rounded-full transition-colors border border-gray-200"
           disabled={failedCount === 0}
           onClick={() => {
             toast.info("Retrying failed documents...");
@@ -47,13 +47,6 @@ const columns = [
           aria-label="Retry failed documents"
         >
           <RefreshCw className={`h-4 w-4 ${failedCount === 0 ? 'text-gray-300' : 'text-blue-500'}`} />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <FileText className="h-4 w-4 text-gray-500" />
         </Button>
       </div>
     ),
