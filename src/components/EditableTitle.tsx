@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 type EditableTitleProps = {
   initialValue: string;
@@ -44,15 +44,12 @@ export const EditableTitle = ({ initialValue, onSave }: EditableTitleProps) => {
 
   return (
     <div className="flex items-center justify-between w-full">
-      <h1 className="text-2xl font-bold">{value}</h1>
-      <Button
-        variant="ghost"
-        size="icon"
+      <h1 
+        className="text-2xl font-bold cursor-pointer transition-colors hover:text-primary/80" 
         onClick={() => setIsEditing(true)}
-        className="ml-2"
       >
-        <Pencil className="h-4 w-4" />
-      </Button>
+        {value}
+      </h1>
     </div>
   );
 };
