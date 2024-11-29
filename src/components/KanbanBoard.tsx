@@ -104,11 +104,7 @@ export const KanbanBoard = () => {
                 {column.icon}
                 <h3 className="font-semibold">{column.title}</h3>
               </div>
-              {column.action && (
-                <div className="flex gap-4">
-                  {column.action(failedDocumentsCount)}
-                </div>
-              )}
+              {column.action && column.action(failedDocumentsCount)}
             </div>
             <Droppable droppableId={column.id}>
               {(provided) => (
