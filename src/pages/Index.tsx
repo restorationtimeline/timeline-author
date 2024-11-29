@@ -116,8 +116,8 @@ const Index = () => {
     >
       <Header />
       <CommandPalette />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col space-y-8">
+      <div className="container mx-auto">
+        <div className="flex flex-col space-y-8 py-8">
           <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Sources</h2>
