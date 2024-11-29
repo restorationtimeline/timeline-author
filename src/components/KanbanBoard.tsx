@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "./ui/card";
@@ -6,6 +6,7 @@ import { FileText, Clock, CheckCircle, AlertCircle, RefreshCw } from "lucide-rea
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 type Document = {
   id: string;
@@ -56,6 +57,8 @@ const columns = [
 
 export const KanbanBoard = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
@@ -68,6 +71,35 @@ export const KanbanBoard = () => {
       return data as Document[];
     },
   });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('document_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'documents'
+        },
+        (payload) => {
+          queryClient.invalidateQueries({ queryKey: ['documents'] });
+          
+          const eventMessages = {
+            INSERT: 'New document added',
+            UPDATE: 'Document updated',
+            DELETE: 'Document removed'
+          };
+          
+          toast.info(eventMessages[payload.eventType as keyof typeof eventMessages]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [queryClient]);
 
   const handleDragEnd = async (result: any) => {
     if (!result.destination) return;

@@ -1,7 +1,9 @@
 import { FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 type Document = {
   id: string;
@@ -39,6 +41,8 @@ const StatusLabel = ({ status }: { status: Document["status"] }) => {
 
 export const DocumentList = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
@@ -51,6 +55,35 @@ export const DocumentList = () => {
       return data as Document[];
     },
   });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('document_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'documents'
+        },
+        (payload) => {
+          queryClient.invalidateQueries({ queryKey: ['documents'] });
+          
+          const eventMessages = {
+            INSERT: 'New document added',
+            UPDATE: 'Document updated',
+            DELETE: 'Document removed'
+          };
+          
+          toast.info(eventMessages[payload.eventType as keyof typeof eventMessages]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [queryClient]);
 
   if (isLoading) {
     return (
