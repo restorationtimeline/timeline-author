@@ -9,7 +9,157 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      documents: {
+        Row: {
+          created_at: string | null
+          error_logs: string[] | null
+          id: string
+          identifiers: Json | null
+          last_updated: string | null
+          name: string
+          status: Database["public"]["Enums"]["document_status_enum"] | null
+          type: string | null
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_logs?: string[] | null
+          id?: string
+          identifiers?: Json | null
+          last_updated?: string | null
+          name: string
+          status?: Database["public"]["Enums"]["document_status_enum"] | null
+          type?: string | null
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_logs?: string[] | null
+          id?: string
+          identifiers?: Json | null
+          last_updated?: string | null
+          name?: string
+          status?: Database["public"]["Enums"]["document_status_enum"] | null
+          type?: string | null
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
+      entities: {
+        Row: {
+          context: string | null
+          created_at: string | null
+          document_id: string | null
+          id: string
+          last_updated: string | null
+          linked_data: Json | null
+          name: string
+          type: Database["public"]["Enums"]["entity_type_enum"]
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          last_updated?: string | null
+          linked_data?: Json | null
+          name: string
+          type: Database["public"]["Enums"]["entity_type_enum"]
+        }
+        Update: {
+          context?: string | null
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          last_updated?: string | null
+          linked_data?: Json | null
+          name?: string
+          type?: Database["public"]["Enums"]["entity_type_enum"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entities_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          date: string | null
+          description: string | null
+          id: string
+          last_updated: string | null
+          related_documents: string[] | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          related_documents?: string[] | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          related_documents?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          document_id: string | null
+          id: string
+          last_updated: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["task_status_enum"] | null
+          task_name: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          last_updated?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["task_status_enum"] | null
+          task_name: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          last_updated?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["task_status_enum"] | null
+          task_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -189,6 +339,7 @@ export type Database = {
       }
     }
     Enums: {
+      document_status_enum: "pending" | "processing" | "completed" | "failed"
       entity_type_enum:
         | "person"
         | "location"
@@ -210,6 +361,7 @@ export type Database = {
         | "family_search"
         | "ancestry"
       status_enum: "pending" | "processing" | "completed" | "failed"
+      task_status_enum: "pending" | "in_progress" | "completed" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
