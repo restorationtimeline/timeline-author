@@ -117,41 +117,35 @@ const Index = () => {
       <CommandPalette />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col space-y-8">
-          <div className="flex items-start gap-8">
-            <div className="w-48 shrink-0">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Sources</h2>
-            </div>
-            
-            <div className="flex-1 min-w-0">
-              <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
-                <div className="flex justify-end mb-4">
-                  <TabsList>
-                    <TabsTrigger value="grid" className="flex items-center gap-2">
-                      <Grid2X2 className="h-4 w-4" />
-                      Grid
-                    </TabsTrigger>
-                    <TabsTrigger value="list" className="flex items-center gap-2">
-                      <List className="h-4 w-4" />
-                      List
-                    </TabsTrigger>
-                    <TabsTrigger value="kanban" className="flex items-center gap-2">
-                      <Kanban className="h-4 w-4" />
-                      Kanban
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-                <TabsContent value="grid" className="w-full">
-                  <DocumentGrid />
-                </TabsContent>
-                <TabsContent value="list" className="w-full">
-                  <DocumentList />
-                </TabsContent>
-                <TabsContent value="kanban" className="w-full">
-                  <KanbanBoard />
-                </TabsContent>
-              </Tabs>
-            </div>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-gray-900">Sources</h2>
+            <TabsList>
+              <TabsTrigger value="grid" className="flex items-center gap-2">
+                <Grid2X2 className="h-4 w-4" />
+                Grid
+              </TabsTrigger>
+              <TabsTrigger value="list" className="flex items-center gap-2">
+                <List className="h-4 w-4" />
+                List
+              </TabsTrigger>
+              <TabsTrigger value="kanban" className="flex items-center gap-2">
+                <Kanban className="h-4 w-4" />
+                Kanban
+              </TabsTrigger>
+            </TabsList>
           </div>
+          
+          <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
+            <TabsContent value="grid" className="w-full mt-0">
+              <DocumentGrid />
+            </TabsContent>
+            <TabsContent value="list" className="w-full mt-0">
+              <DocumentList />
+            </TabsContent>
+            <TabsContent value="kanban" className="w-full mt-0">
+              <KanbanBoard />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
