@@ -15,6 +15,15 @@ type Document = {
   type: string;
   uploaded_at: string;
   uploaded_by: string;
+  created_at: string | null;
+  deleted_at: string | null;
+  error_logs: string[] | null;
+  identifiers: Record<string, unknown> | null;
+  last_updated: string | null;
+  profiles?: {
+    first_name: string | null;
+    last_name: string | null;
+  } | null;
 };
 
 const StatusIcon = ({ status }: { status: Document["status"] }) => {
@@ -44,7 +53,7 @@ export const DocumentGrid = () => {
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
-      return docs as (Document & { profiles: { first_name: string; last_name: string } })[];
+      return docs as Document[];
     },
   });
 
