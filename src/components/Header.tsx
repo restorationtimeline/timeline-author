@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { LogOut, Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -54,11 +53,13 @@ export const Header = () => {
         updateItem(file, { status: 'uploading' });
 
         const fileExt = file.name.split('.').pop();
-        const fileName = `${crypto.randomUUID()}.${fileExt}`;
+        const documentId = crypto.randomUUID();
+        const fileName = `${documentId}.${fileExt}`;
+        const filePath = `${documentId}/${fileName}`; // Store in UUID folder
         
         const { data: storageData, error: uploadError } = await supabase.storage
           .from('documents')
-          .upload(fileName, file, {
+          .upload(filePath, file, {
             contentType: file.type,
             upsert: false
           });
@@ -75,7 +76,7 @@ export const Header = () => {
             status: 'pending',
             uploaded_by: session.user.id,
             identifiers: {
-              storage_path: fileName
+              storage_path: filePath
             }
           });
 

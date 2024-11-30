@@ -103,11 +103,13 @@ export const CommandPalette = () => {
         updateItem(file, { status: 'uploading' });
 
         const fileExt = file.name.split('.').pop();
-        const fileName = `${crypto.randomUUID()}.${fileExt}`;
+        const documentId = crypto.randomUUID();
+        const fileName = `${documentId}.${fileExt}`;
+        const filePath = `${documentId}/${fileName}`; // Store in UUID folder
         
         const { data: storageData, error: uploadError } = await supabase.storage
           .from('documents')
-          .upload(fileName, file, {
+          .upload(filePath, file, {
             contentType: file.type,
             upsert: false
           });
@@ -124,7 +126,7 @@ export const CommandPalette = () => {
             status: 'pending',
             uploaded_by: session.user.id,
             identifiers: {
-              storage_path: fileName
+              storage_path: filePath
             }
           });
 
