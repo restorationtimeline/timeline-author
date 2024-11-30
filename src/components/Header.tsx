@@ -47,17 +47,17 @@ export const Header = () => {
 
   return (
     <header className="w-full h-16 md:h-20 bg-primary border-b border-border/40 shadow-sm">
-      <div className="container h-full flex items-center justify-between">
+      <div className="container h-full flex items-center justify-between px-2 md:px-8">
         <Link to="/" className="text-primary-foreground font-semibold hover:text-primary-foreground/90 transition-colors">
           Restoration Timeline
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1 md:gap-4">
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink
                   className={cn(
-                    "text-primary-foreground/90 hover:text-primary-foreground",
+                    "text-primary-foreground/90 hover:text-primary-foreground px-2 md:px-4",
                     "transition-colors"
                   )}
                   href="/"
