@@ -1,7 +1,3 @@
-import { FileText } from "lucide-react";
-import { getFriendlyMimeType } from "@/utils/mimeTypes";
-import { StatusIcon } from "./StatusIcon";
-
 interface Document {
   id: string;
   name: string;
@@ -22,15 +18,12 @@ export const DocumentListItem = ({ document, onClick }: DocumentListItemProps) =
       onClick={onClick}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <FileText className="h-6 w-6 text-primary" />
-          <div>
-            <h3 className="font-medium text-foreground">{document.name}</h3>
-            <p className="text-sm text-muted-foreground">
-              {getFriendlyMimeType(document.type)} • Uploaded on{" "}
-              {new Date(document.uploaded_at).toLocaleDateString()}
-            </p>
-          </div>
+        <div>
+          <h3 className="font-medium text-foreground">{document.name}</h3>
+          <p className="text-sm text-muted-foreground">
+            {getFriendlyMimeType(document.type)} • Uploaded on{" "}
+            {new Date(document.uploaded_at).toLocaleDateString()}
+          </p>
         </div>
         <StatusIcon status={document.status} />
       </div>

@@ -1,5 +1,3 @@
-import { Clock, CheckCircle, AlertCircle } from "lucide-react";
-
 type DocumentStatus = "pending" | "processing" | "completed" | "failed";
 
 interface StatusIconProps {
@@ -7,14 +5,20 @@ interface StatusIconProps {
 }
 
 export const StatusIcon = ({ status }: StatusIconProps) => {
-  switch (status) {
-    case "processing":
-      return <Clock className="h-5 w-5 text-accent animate-spin" />;
-    case "completed":
-      return <CheckCircle className="h-5 w-5 text-green-500" />;
-    case "failed":
-      return <AlertCircle className="h-5 w-5 text-red-500" />;
-    default:
-      return <Clock className="h-5 w-5 text-gray-500" />;
-  }
+  const getStatusColor = () => {
+    switch (status) {
+      case "processing":
+        return "text-accent";
+      case "completed":
+        return "text-green-500";
+      case "failed":
+        return "text-red-500";
+      default:
+        return "text-gray-500";
+    }
+  };
+
+  return (
+    <div className={`h-3 w-3 rounded-full ${getStatusColor()}`} />
+  );
 };
