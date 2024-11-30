@@ -21,7 +21,7 @@ export const DocumentGrid = () => {
     queryKey: ["documents"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("documents")
+        .from("sources")
         .select("*")
         .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
@@ -39,7 +39,7 @@ export const DocumentGrid = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'documents'
+          table: 'sources'
         },
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ['documents'] });

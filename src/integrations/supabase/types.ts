@@ -9,7 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      documents: {
+      entities: {
+        Row: {
+          context: string | null
+          created_at: string | null
+          entity_type: Database["public"]["Enums"]["entity_type_enum"]
+          id: string
+          last_updated: string | null
+          linked_data: Json | null
+          name: string
+          source_id: string | null
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string | null
+          entity_type: Database["public"]["Enums"]["entity_type_enum"]
+          id?: string
+          last_updated?: string | null
+          linked_data?: Json | null
+          name: string
+          source_id?: string | null
+        }
+        Update: {
+          context?: string | null
+          created_at?: string | null
+          entity_type?: Database["public"]["Enums"]["entity_type_enum"]
+          id?: string
+          last_updated?: string | null
+          linked_data?: Json | null
+          name?: string
+          source_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entities_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          date: string | null
+          description: string | null
+          id: string
+          last_updated: string | null
+          related_sources: string[] | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          related_sources?: string[] | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          related_sources?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+        }
+        Relationships: []
+      }
+      sources: {
         Row: {
           created_at: string | null
           deleted_at: string | null
@@ -54,105 +146,13 @@ export type Database = {
         }
         Relationships: []
       }
-      entities: {
-        Row: {
-          context: string | null
-          created_at: string | null
-          document_id: string | null
-          entity_type: Database["public"]["Enums"]["entity_type_enum"]
-          id: string
-          last_updated: string | null
-          linked_data: Json | null
-          name: string
-        }
-        Insert: {
-          context?: string | null
-          created_at?: string | null
-          document_id?: string | null
-          entity_type: Database["public"]["Enums"]["entity_type_enum"]
-          id?: string
-          last_updated?: string | null
-          linked_data?: Json | null
-          name: string
-        }
-        Update: {
-          context?: string | null
-          created_at?: string | null
-          document_id?: string | null
-          entity_type?: Database["public"]["Enums"]["entity_type_enum"]
-          id?: string
-          last_updated?: string | null
-          linked_data?: Json | null
-          name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "entities_document_id_fkey"
-            columns: ["document_id"]
-            isOneToOne: false
-            referencedRelation: "documents"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      events: {
-        Row: {
-          created_at: string | null
-          date: string | null
-          description: string | null
-          id: string
-          last_updated: string | null
-          related_documents: string[] | null
-          title: string
-        }
-        Insert: {
-          created_at?: string | null
-          date?: string | null
-          description?: string | null
-          id?: string
-          last_updated?: string | null
-          related_documents?: string[] | null
-          title: string
-        }
-        Update: {
-          created_at?: string | null
-          date?: string | null
-          description?: string | null
-          id?: string
-          last_updated?: string | null
-          related_documents?: string[] | null
-          title?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          first_name: string | null
-          id: string
-          last_name: string | null
-        }
-        Insert: {
-          created_at?: string
-          first_name?: string | null
-          id: string
-          last_name?: string | null
-        }
-        Update: {
-          created_at?: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-        }
-        Relationships: []
-      }
       tasks: {
         Row: {
           completed_at: string | null
           created_at: string | null
-          document_id: string | null
           id: string
           last_updated: string | null
+          source_id: string | null
           started_at: string | null
           status: Database["public"]["Enums"]["task_status_enum"] | null
           task_name: string
@@ -160,9 +160,9 @@ export type Database = {
         Insert: {
           completed_at?: string | null
           created_at?: string | null
-          document_id?: string | null
           id?: string
           last_updated?: string | null
+          source_id?: string | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["task_status_enum"] | null
           task_name: string
@@ -170,19 +170,19 @@ export type Database = {
         Update: {
           completed_at?: string | null
           created_at?: string | null
-          document_id?: string | null
           id?: string
           last_updated?: string | null
+          source_id?: string | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["task_status_enum"] | null
           task_name?: string
         }
         Relationships: [
           {
-            foreignKeyName: "tasks_document_id_fkey"
-            columns: ["document_id"]
+            foreignKeyName: "tasks_source_id_fkey"
+            columns: ["source_id"]
             isOneToOne: false
-            referencedRelation: "documents"
+            referencedRelation: "sources"
             referencedColumns: ["id"]
           },
         ]

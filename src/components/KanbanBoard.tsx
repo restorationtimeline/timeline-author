@@ -62,7 +62,7 @@ export const KanbanBoard = () => {
     queryKey: ["documents"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("documents")
+        .from("sources")
         .select("*")
         .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
@@ -80,7 +80,7 @@ export const KanbanBoard = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'documents'
+          table: 'sources'
         },
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ['documents'] });
