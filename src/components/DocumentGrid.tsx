@@ -75,11 +75,11 @@ export const DocumentGrid = () => {
       {documents?.map((doc) => (
         <Card 
           key={doc.id} 
-          className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+          className="p-4 bg-background dark:bg-gray-800 hover:shadow-md transition-shadow cursor-pointer border border-border/40"
           onClick={() => navigate(`/sources/${doc.id}`)}
         >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-medium text-lg">{doc.name}</h3>
+            <h3 className="font-medium text-lg text-foreground">{doc.name}</h3>
             <StatusIcon status={doc.status} />
           </div>
         </Card>
