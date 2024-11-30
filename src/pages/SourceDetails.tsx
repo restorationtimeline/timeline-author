@@ -147,7 +147,7 @@ const SourceDetails = () => {
             <div className="mt-6 space-y-4">
               <Button 
                 size="lg" 
-                className="w-full h-16 bg-green-600 hover:bg-green-700"
+                className="w-full h-16 bg-green-600 hover:bg-green-700 select-none"
                 onClick={handleDownload}
               >
                 <Download className="h-5 w-5 mr-2" />
