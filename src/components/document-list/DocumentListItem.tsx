@@ -1,3 +1,6 @@
+import { getFriendlyMimeType } from "@/utils/mimeTypes";
+import { StatusIcon } from "./StatusIcon";
+
 interface Document {
   id: string;
   name: string;
