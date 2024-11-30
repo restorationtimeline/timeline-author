@@ -8,6 +8,7 @@ import { EditableTitle } from "@/components/EditableTitle";
 import { Header } from "@/components/Header";
 import { DeleteButton } from "@/components/source-details/DeleteButton";
 import { ErrorLogs } from "@/components/source-details/ErrorLogs";
+import { IdentifiersForm } from "@/components/source-details/IdentifiersForm";
 import { toast } from "sonner";
 
 type DocumentIdentifiers = {
@@ -143,6 +144,11 @@ const SourceDetails = () => {
 
             <DocumentMetadata document={documentData} />
             <ErrorLogs errors={documentData.error_logs} />
+            
+            <IdentifiersForm 
+              documentId={documentData.id} 
+              initialIdentifiers={documentData.identifiers} 
+            />
 
             <div className="mt-6 space-y-4">
               <Button 
