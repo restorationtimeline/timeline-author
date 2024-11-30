@@ -113,7 +113,7 @@ const Index = () => {
 
   return (
     <div 
-      className={`min-h-screen bg-gray-100 transition-colors ${isDragging ? 'bg-primary/5' : ''}`}
+      className={`min-h-screen bg-background dark:bg-gray-900 transition-colors ${isDragging ? 'bg-primary/5' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -124,8 +124,8 @@ const Index = () => {
         <div className="flex flex-col space-y-8 py-8">
           <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900">Sources</h2>
-              <TabsList className="bg-white border">
+              <h2 className="text-2xl font-semibold text-foreground">Sources</h2>
+              <TabsList className="bg-white dark:bg-gray-800 border">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -176,7 +176,7 @@ const Index = () => {
             </div>
             
             {uploadQueue.length > 0 && (
-              <div className="mb-6 p-4 border rounded-lg bg-white shadow-sm">
+              <div className="mb-6 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-sm">
                 <UploadQueue items={uploadQueue} />
               </div>
             )}
