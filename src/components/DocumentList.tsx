@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Clock } from "lucide-react";
-import { DocumentListItem } from "./document-list/DocumentListItem";
 import { StatusIcon } from "./document-list/StatusIcon";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
 type Document = {
   id: string;
@@ -98,15 +99,37 @@ export const DocumentList = () => {
                 {StatusLabel({ status })} ({docs.length})
               </h2>
             </div>
-            <div className="space-y-4">
-              {docs.map((doc) => (
-                <DocumentListItem
-                  key={doc.id}
-                  document={doc}
-                  onClick={() => navigate(`/sources/${doc.id}`)}
-                />
-              ))}
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Upload Date</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {docs.map((doc) => (
+                  <TableRow
+                    key={doc.id}
+                    className="cursor-pointer hover:bg-accent/50"
+                    onClick={() => navigate(`/sources/${doc.id}`)}
+                  >
+                    <TableCell className="font-medium">{doc.name}</TableCell>
+                    <TableCell>{getFriendlyMimeType(doc.type)}</TableCell>
+                    <TableCell>
+                      {new Date(doc.uploaded_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <StatusIcon status={doc.status} />
+                        <span>{StatusLabel({ status: doc.status })}</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         );
       })}
