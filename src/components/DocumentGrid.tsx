@@ -1,12 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, Clock, CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
+import { FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { Card } from "./ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Button } from "./ui/button";
+import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
 type Document = {
   id: string;
@@ -14,19 +13,6 @@ type Document = {
   status: "pending" | "processing" | "completed" | "failed";
   type: string;
   uploaded_at: string;
-  uploaded_by: string;
-  created_at: string | null;
-  deleted_at: string | null;
-  error_logs: string[] | null;
-  identifiers: Record<string, unknown> | null;
-  last_updated: string | null;
-  profile: Profile;
-};
-
-type Profile = {
-  id: string;
-  first_name: string | null;
-  last_name: string | null;
 };
 
 const StatusIcon = ({ status }: { status: Document["status"] }) => {
@@ -49,35 +35,16 @@ export const DocumentGrid = () => {
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
-      const { data: docs, error } = await supabase
+      const { data, error } = await supabase
         .from("documents")
-        .select(`
-          *,
-          profile:profiles!documents_uploaded_by_fkey(id, first_name, last_name)
-        `)
+        .select("*")
         .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
-      return (docs || []) as Document[];
+      return data as Document[];
     },
   });
-
-  const handleProcessing = async (docId: string) => {
-    try {
-      const { error } = await supabase
-        .from('documents')
-        .update({ status: 'processing' })
-        .eq('id', docId);
-      
-      if (error) throw error;
-      
-      toast.success("Started processing document");
-    } catch (error) {
-      toast.error("Failed to start processing");
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
     const channel = supabase
@@ -89,7 +56,7 @@ export const DocumentGrid = () => {
           schema: 'public',
           table: 'documents'
         },
-        () => {
+        (payload) => {
           queryClient.invalidateQueries({ queryKey: ['documents'] });
         }
       )
@@ -116,34 +83,10 @@ export const DocumentGrid = () => {
             <FileText className="h-6 w-6 text-primary" />
             <StatusIcon status={doc.status} />
           </div>
-          <h3 className="font-medium text-lg mb-3">{doc.name}</h3>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary/10 text-primary">
-                  {doc.profile?.first_name?.[0] || ''}
-                  {doc.profile?.last_name?.[0] || ''}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm text-gray-600">
-                {doc.profile?.first_name} {doc.profile?.last_name}
-              </span>
-            </div>
-            {doc.status === 'pending' && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="ml-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleProcessing(doc.id);
-                }}
-              >
-                Process
-                <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-            )}
-          </div>
+          <h3 className="font-medium text-lg mb-2">{doc.name}</h3>
+          <p className="text-sm text-gray-500">
+            {getFriendlyMimeType(doc.type)} • {new Date(doc.uploaded_at).toLocaleDateString()}
+          </p>
         </Card>
       ))}
     </div>
