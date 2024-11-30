@@ -127,7 +127,7 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleFileUploadClick}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12 md:h-8 md:w-8"
+                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
               >
                 <Plus className="h-6 w-6 md:h-4 md:w-4" />
               </Button>
@@ -143,7 +143,7 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12 md:h-8 md:w-8"
+                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
               >
                 {theme === "dark" ? (
                   <Sun className="h-5 w-5 md:h-4 md:w-4" />
@@ -163,7 +163,7 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12 md:h-8 md:w-8"
+                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
               >
                 <LogOut className="h-5 w-5 md:h-4 md:w-4" />
               </Button>
