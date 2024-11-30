@@ -58,7 +58,7 @@ export const Header = () => {
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('documents')
+          .from('sources')  // Changed from 'documents' to 'sources'
           .upload(fileName, file, {
             contentType: file.type,
             upsert: false

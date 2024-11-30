@@ -82,7 +82,7 @@ export const CommandPalette = () => {
     const fileArray = Array.from(files);
     if (fileArray.length === 0) return;
 
-    for (const file of fileArray) {
+    for (const file of files) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
@@ -105,10 +105,10 @@ export const CommandPalette = () => {
         const fileExt = file.name.split('.').pop();
         const documentId = crypto.randomUUID();
         const fileName = `${documentId}.${fileExt}`;
-        const filePath = `${documentId}/${fileName}`; // Store in UUID folder
+        const filePath = `${documentId}/${fileName}`; 
         
         const { data: storageData, error: uploadError } = await supabase.storage
-          .from('documents')
+          .from('sources')  // Changed from 'documents' to 'sources'
           .upload(filePath, file, {
             contentType: file.type,
             upsert: false
