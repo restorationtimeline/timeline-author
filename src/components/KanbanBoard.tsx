@@ -114,7 +114,7 @@ export const KanbanBoard = () => {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
               {column.icon}
-              <h3 className="text-sm font-medium text-foreground">{column.title}</h3>
+              <h3 className="text-sm font-medium text-foreground break-words">{column.title}</h3>
             </div>
             {column.action && column.action(failedDocumentsCount)}
           </div>
@@ -128,7 +128,7 @@ export const KanbanBoard = () => {
                   onClick={() => navigate(`/sources/${doc.id}`)}
                 >
                   <div>
-                    <h4 className="text-sm font-medium text-foreground truncate">{doc.name}</h4>
+                    <h4 className="text-sm font-medium text-foreground break-words">{doc.name}</h4>
                   </div>
                 </Card>
               ))}

@@ -65,7 +65,7 @@ export const DocumentGrid = () => {
           onClick={() => navigate(`/sources/${doc.id}`)}
         >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-foreground truncate">{doc.name}</h3>
+            <h3 className="text-sm font-medium text-foreground break-words">{doc.name}</h3>
           </div>
         </Card>
       ))}
