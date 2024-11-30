@@ -56,8 +56,8 @@ export const Header = () => {
 
         const fileExt = file.name.split('.').pop();
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
-        
-        const { data: storageData, error: uploadError } = await supabase.storage
+
+        const { error: uploadError } = await supabase.storage
           .from('documents')
           .upload(fileName, file, {
             contentType: file.type,
@@ -66,12 +66,10 @@ export const Header = () => {
 
         if (uploadError) throw uploadError;
 
-        const baseName = file.name.split('.')[0];
-        
         const { error: dbError } = await supabase
-          .from('documents')
+          .from('sources')
           .insert({
-            name: baseName,
+            name: file.name,
             type: file.type,
             status: 'pending',
             uploaded_by: session.user.id,
@@ -185,3 +183,4 @@ export const Header = () => {
     </header>
   );
 };
+

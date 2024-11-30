@@ -96,7 +96,7 @@ const Index = () => {
         if (uploadError) throw uploadError;
 
         const { error: dbError } = await supabase
-          .from('documents')
+          .from('sources')
           .insert({
             name: file.name,
             type: file.type,
