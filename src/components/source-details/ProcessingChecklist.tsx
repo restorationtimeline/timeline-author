@@ -1,4 +1,4 @@
-import { CheckCircle2, Circle, Play } from "lucide-react";
+import { CheckCircle2, Circle, CirclePlay } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -56,7 +56,7 @@ export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistP
               className="h-5 w-5 p-0"
               onClick={() => handleRunNextStep(index)}
             >
-              <Play className="h-5 w-5 text-primary" />
+              <CirclePlay className="h-5 w-5 text-blue-500" />
             </Button>
           ) : index < completedSteps ? (
             <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
