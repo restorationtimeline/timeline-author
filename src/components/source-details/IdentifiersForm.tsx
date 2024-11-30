@@ -5,6 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, X } from "lucide-react";
 import { Json } from "@/integrations/supabase/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Identifiers = Record<string, string>;
 
@@ -12,6 +19,15 @@ interface IdentifiersFormProps {
   documentId: string;
   initialIdentifiers?: Json;
 }
+
+const IDENTIFIER_TYPES = [
+  "ISBN-10",
+  "ISBN-13",
+  "DOI",
+  "URL",
+  "QID",
+  "ISSN",
+] as const;
 
 export const IdentifiersForm = ({ documentId, initialIdentifiers = {} }: IdentifiersFormProps) => {
   const parseIdentifiers = (json: Json): Identifiers => {
@@ -27,12 +43,12 @@ export const IdentifiersForm = ({ documentId, initialIdentifiers = {} }: Identif
   };
 
   const [identifiers, setIdentifiers] = useState<Identifiers>(parseIdentifiers(initialIdentifiers));
-  const [newKey, setNewKey] = useState("");
+  const [newKey, setNewKey] = useState<string>("");
   const [newValue, setNewValue] = useState("");
 
   const handleAddIdentifier = async () => {
-    if (!newKey.trim() || !newValue.trim()) {
-      toast.error("Both key and value are required");
+    if (!newKey || !newValue.trim()) {
+      toast.error("Both identifier type and value are required");
       return;
     }
 
@@ -101,12 +117,18 @@ export const IdentifiersForm = ({ documentId, initialIdentifiers = {} }: Identif
       </div>
 
       <div className="flex gap-2">
-        <Input
-          placeholder="Key"
-          value={newKey}
-          onChange={(e) => setNewKey(e.target.value)}
-          className="flex-1"
-        />
+        <Select value={newKey} onValueChange={setNewKey}>
+          <SelectTrigger className="flex-1">
+            <SelectValue placeholder="Select identifier type" />
+          </SelectTrigger>
+          <SelectContent>
+            {IDENTIFIER_TYPES.map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Input
           placeholder="Value"
           value={newValue}
