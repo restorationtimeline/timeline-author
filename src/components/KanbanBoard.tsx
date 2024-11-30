@@ -108,9 +108,9 @@ export const KanbanBoard = () => {
   const failedDocumentsCount = documents?.filter(doc => doc.status === "failed").length || 0;
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {columns.map((column) => (
-        <div key={column.id} className="flex flex-col bg-white p-3 rounded-lg min-h-[600px] shadow-sm">
+        <div key={column.id} className="flex flex-col bg-white p-3 rounded-lg min-h-[300px] md:min-h-[600px] shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
               {column.icon}
