@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export const processingSteps = [
-  "Document uploaded successfully",
-  "Text extraction completed",
-  "Named entities identified",
-  "Document classification completed",
-  "Semantic analysis finished",
-  "Timeline events mapped"
+  "Extract Content and Metadata",
+  "Preprocessing",
+  "Categorize the Source",
+  "Link to Online Identifiers",
+  "Semantically Chunk Content",
+  "Create Embeddings",
+  "Run Named Entity Recognition (NER)",
+  "Review and Approval"
 ];
 
 interface ProcessingChecklistProps {
