@@ -6,11 +6,13 @@ import { useNavigate, Link } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { useRef } from "react";
+import { useUploadQueueStore } from "@/stores/uploadQueueStore";
 
 export const Header = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { addItem, updateItem, clearCompleted } = useUploadQueueStore();
 
   const handleLogout = async () => {
     try {
@@ -27,20 +29,85 @@ export const Header = () => {
     }
   };
 
-  const handleFileUpload = () => {
-    fileInputRef.current?.click();
+  const handleFileUpload = async (files: FileList) => {
+    const fileArray = Array.from(files);
+    if (fileArray.length === 0) return;
+
+    for (const file of fileArray) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast({
+            title: "Error",
+            description: "You must be logged in to upload files",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        addItem({
+          file,
+          progress: 0,
+          status: 'waiting'
+        });
+
+        updateItem(file, { status: 'uploading' });
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
+        
+        const { data: storageData, error: uploadError } = await supabase.storage
+          .from('documents')
+          .upload(fileName, file, {
+            contentType: file.type,
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        const baseName = file.name.split('.')[0];
+        
+        const { error: dbError } = await supabase
+          .from('documents')
+          .insert({
+            name: baseName,
+            type: file.type,
+            status: 'pending',
+            uploaded_by: session.user.id,
+            identifiers: {
+              storage_path: fileName
+            }
+          });
+
+        if (dbError) throw dbError;
+
+        updateItem(file, { progress: 100, status: 'completed' });
+        
+        toast({
+          title: "Success",
+          description: `Uploaded ${file.name}`,
+        });
+
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        updateItem(file, { status: 'error' });
+        
+        toast({
+          title: "Error",
+          description: `Failed to upload ${file.name}`,
+          variant: "destructive",
+        });
+      }
+    }
+
+    setTimeout(() => {
+      clearCompleted();
+    }, 3000);
   };
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      // This will trigger the existing file upload functionality
-      const event = new DragEvent('drop', { bubbles: true });
-      Object.defineProperty(event, 'dataTransfer', {
-        value: {
-          files: e.target.files
-        }
-      });
-      document.querySelector('.border-dashed')?.dispatchEvent(event);
+  const handleFileUploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -56,7 +123,7 @@ export const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={handleFileUpload}
+                onClick={handleFileUploadClick}
                 className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10"
               >
                 <Plus className="h-5 w-5" />
@@ -88,7 +155,11 @@ export const Header = () => {
           type="file"
           ref={fileInputRef}
           className="hidden"
-          onChange={handleFileInputChange}
+          onChange={(e) => {
+            if (e.target.files) {
+              handleFileUpload(e.target.files);
+            }
+          }}
           multiple
         />
       </div>

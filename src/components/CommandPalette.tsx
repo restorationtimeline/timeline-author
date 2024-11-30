@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useUploadQueueStore } from "@/stores/uploadQueueStore";
 
 export const CommandPalette = () => {
   const [open, setOpen] = React.useState(false);
@@ -19,6 +20,7 @@ export const CommandPalette = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { addItem, updateItem, clearCompleted } = useUploadQueueStore();
 
   const isValidUrl = (urlString: string) => {
     try {
@@ -74,6 +76,82 @@ export const CommandPalette = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleFileUpload = async (files: FileList) => {
+    const fileArray = Array.from(files);
+    if (fileArray.length === 0) return;
+
+    for (const file of fileArray) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast({
+            title: "Error",
+            description: "You must be logged in to upload files",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        addItem({
+          file,
+          progress: 0,
+          status: 'waiting'
+        });
+
+        updateItem(file, { status: 'uploading' });
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
+        
+        const { data: storageData, error: uploadError } = await supabase.storage
+          .from('documents')
+          .upload(fileName, file, {
+            contentType: file.type,
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        const baseName = file.name.split('.')[0];
+        
+        const { error: dbError } = await supabase
+          .from('documents')
+          .insert({
+            name: baseName,
+            type: file.type,
+            status: 'pending',
+            uploaded_by: session.user.id,
+            identifiers: {
+              storage_path: fileName
+            }
+          });
+
+        if (dbError) throw dbError;
+
+        updateItem(file, { progress: 100, status: 'completed' });
+        
+        toast({
+          title: "Success",
+          description: `Uploaded ${file.name}`,
+        });
+
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        updateItem(file, { status: 'error' });
+        
+        toast({
+          title: "Error",
+          description: `Failed to upload ${file.name}`,
+          variant: "destructive",
+        });
+      }
+    }
+
+    setTimeout(() => {
+      clearCompleted();
+    }, 3000);
   };
 
   const handleUploadClick = () => {
@@ -160,15 +238,8 @@ export const CommandPalette = () => {
         ref={fileInputRef}
         className="hidden"
         onChange={(e) => {
-          if (e.target.files && e.target.files[0]) {
-            // This will trigger the existing file upload functionality
-            const event = new DragEvent('drop', { bubbles: true });
-            Object.defineProperty(event, 'dataTransfer', {
-              value: {
-                files: e.target.files
-              }
-            });
-            document.querySelector('.border-dashed')?.dispatchEvent(event);
+          if (e.target.files) {
+            handleFileUpload(e.target.files);
           }
         }}
         multiple
