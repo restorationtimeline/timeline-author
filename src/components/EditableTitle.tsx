@@ -45,7 +45,7 @@ export const EditableTitle = ({ initialValue, onSave }: EditableTitleProps) => {
   return (
     <div className="flex items-center justify-between w-full">
       <h1 
-        className="text-2xl font-bold cursor-pointer transition-colors hover:text-primary/80" 
+        className="text-2xl font-bold cursor-pointer transition-colors hover:text-primary/80 dark:hover:text-accent-foreground/80" 
         onClick={() => setIsEditing(true)}
       >
         {value}
