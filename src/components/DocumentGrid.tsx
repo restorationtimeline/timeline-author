@@ -1,6 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { Card } from "./ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -12,19 +11,6 @@ type Document = {
   status: "pending" | "processing" | "completed" | "failed";
   type: string;
   uploaded_at: string;
-};
-
-const StatusIcon = ({ status }: { status: Document["status"] }) => {
-  switch (status) {
-    case "processing":
-      return <Clock className="h-5 w-5 text-blue-500 animate-spin" />;
-    case "completed":
-      return <CheckCircle className="h-5 w-5 text-green-500" />;
-    case "failed":
-      return <AlertCircle className="h-5 w-5 text-red-500" />;
-    default:
-      return <Clock className="h-5 w-5 text-gray-500" />;
-  }
 };
 
 export const DocumentGrid = () => {
@@ -80,7 +66,6 @@ export const DocumentGrid = () => {
         >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-medium text-lg text-foreground">{doc.name}</h3>
-            <StatusIcon status={doc.status} />
           </div>
         </Card>
       ))}
