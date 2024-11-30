@@ -36,12 +36,33 @@ export const DocumentUpload = () => {
     return lastDotIndex === -1 ? fileName : fileName.substring(0, lastDotIndex);
   };
 
+  const processPdfDocument = async (documentId: string, filePath: string) => {
+    try {
+      const response = await fetch('/api/process-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ documentId, filePath }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process PDF');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error processing PDF:', error);
+      throw error;
+    }
+  };
+
   const handleFiles = async (files: File[]) => {
     if (files.length === 0) return;
 
     setIsUploading(true);
     
-    // Initialize upload queue
     files.forEach(file => {
       addItem({
         file,
@@ -79,7 +100,7 @@ export const DocumentUpload = () => {
 
           const baseName = getBaseFileName(file.name);
           
-          const { error: dbError } = await supabase
+          const { data: document, error: dbError } = await supabase
             .from('documents')
             .insert({
               name: baseName,
@@ -89,11 +110,23 @@ export const DocumentUpload = () => {
               identifiers: {
                 storage_path: fileName
               }
-            });
+            })
+            .select()
+            .single();
 
           if (dbError) throw dbError;
 
+          // If this is a PDF file, process it
+          if (file.type === 'application/pdf') {
+            await processPdfDocument(document.id, fileName);
+          }
+
           updateItem(file, { progress: 100, status: 'completed' });
+          
+          toast({
+            title: "Success",
+            description: `Uploaded ${file.name}`,
+          });
 
         } catch (error) {
           console.error('Error uploading file:', error);
@@ -107,12 +140,6 @@ export const DocumentUpload = () => {
         }
       }
 
-      toast({
-        title: "Success",
-        description: `Uploaded ${files.length} file${files.length > 1 ? 's' : ''}`,
-      });
-
-      // Clear completed uploads after a delay
       setTimeout(() => {
         clearCompleted();
       }, 3000);

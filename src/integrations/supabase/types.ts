@@ -56,31 +56,31 @@ export type Database = {
           context: string | null
           created_at: string | null
           document_id: string | null
+          entity_type: Database["public"]["Enums"]["entity_type_enum"]
           id: string
           last_updated: string | null
           linked_data: Json | null
           name: string
-          type: Database["public"]["Enums"]["entity_type_enum"]
         }
         Insert: {
           context?: string | null
           created_at?: string | null
           document_id?: string | null
+          entity_type: Database["public"]["Enums"]["entity_type_enum"]
           id?: string
           last_updated?: string | null
           linked_data?: Json | null
           name: string
-          type: Database["public"]["Enums"]["entity_type_enum"]
         }
         Update: {
           context?: string | null
           created_at?: string | null
           document_id?: string | null
+          entity_type?: Database["public"]["Enums"]["entity_type_enum"]
           id?: string
           last_updated?: string | null
           linked_data?: Json | null
           name?: string
-          type?: Database["public"]["Enums"]["entity_type_enum"]
         }
         Relationships: [
           {
