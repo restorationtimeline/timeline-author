@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { Progress } from "./ui/progress";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export type UploadItem = {
   file: File;
@@ -13,23 +14,41 @@ interface UploadQueueProps {
 }
 
 export const UploadQueue = ({ items, onCancel }: UploadQueueProps) => {
+  const isMobile = useIsMobile();
+  
   if (items.length === 0) return null;
 
   const completedCount = items.filter(item => item.status === 'completed').length;
   const totalCount = items.length;
   const overallProgress = (completedCount / totalCount) * 100;
 
+  const containerClasses = isMobile
+    ? "fixed inset-0 bg-white z-50 flex flex-col"
+    : "fixed bottom-4 right-4 w-96 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50";
+
   return (
-    <div className="fixed bottom-4 right-4 w-96 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
-      <div className="p-4 border-b border-gray-200">
+    <div className={containerClasses}>
+      <div className={cn(
+        "p-4 border-b border-gray-200",
+        isMobile && "bg-primary text-white"
+      )}>
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-medium">
             Uploading... {completedCount} of {totalCount} done ({Math.round(overallProgress)}%)
           </h3>
         </div>
-        <Progress value={overallProgress} className="h-1" />
+        <Progress 
+          value={overallProgress} 
+          className={cn(
+            "h-1",
+            isMobile && "bg-white/20 [&>[data-role=indicator]]:bg-white"
+          )} 
+        />
       </div>
-      <div className="max-h-64 overflow-y-auto">
+      <div className={cn(
+        "overflow-y-auto",
+        isMobile ? "flex-1" : "max-h-64"
+      )}>
         {items.map((item) => (
           <div
             key={item.file.name}
@@ -49,7 +68,13 @@ export const UploadQueue = ({ items, onCancel }: UploadQueueProps) => {
                 </span>
               </div>
               {item.status === 'uploading' && (
-                <Progress value={item.progress} className="h-1 mt-2" />
+                <Progress 
+                  value={item.progress} 
+                  className={cn(
+                    "h-1 mt-2",
+                    isMobile && "[&>[data-role=indicator]]:bg-primary"
+                  )} 
+                />
               )}
             </div>
             {item.status !== 'completed' && onCancel && (
