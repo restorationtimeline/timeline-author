@@ -2,23 +2,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, CheckCircle2, Circle } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { DocumentMetadata } from "@/components/DocumentMetadata";
 import { EditableTitle } from "@/components/EditableTitle";
 import { Header } from "@/components/Header";
 import { DeleteButton } from "@/components/source-details/DeleteButton";
 import { ErrorLogs } from "@/components/source-details/ErrorLogs";
 import { IdentifiersForm } from "@/components/source-details/IdentifiersForm";
+import { ProcessingChecklist } from "@/components/source-details/ProcessingChecklist";
 import { toast } from "sonner";
-
-const processingSteps = [
-  "Document uploaded successfully",
-  "Text extraction completed",
-  "Named entities identified",
-  "Document classification completed",
-  "Semantic analysis finished",
-  "Timeline events mapped"
-];
 
 const SourceDetails = () => {
   const { id } = useParams();
@@ -159,21 +151,10 @@ const SourceDetails = () => {
             <DocumentMetadata document={documentData} />
             <ErrorLogs errors={documentData.error_logs || []} />
             
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-3">
-              <h3 className="text-lg font-medium mb-4">Processing Status</h3>
-              {processingSteps.map((step, index) => (
-                <div key={step} className="flex items-center space-x-3">
-                  {index < completedSteps ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-                  ) : (
-                    <Circle className="h-5 w-5 text-gray-400 flex-shrink-0" />
-                  )}
-                  <span className={index < completedSteps ? "text-foreground" : "text-muted-foreground"}>
-                    {step}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <ProcessingChecklist 
+              status={documentData.status} 
+              documentId={documentData.id} 
+            />
             
             <IdentifiersForm 
               documentId={documentData.id} 
