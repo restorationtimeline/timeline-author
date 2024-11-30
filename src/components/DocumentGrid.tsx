@@ -52,7 +52,7 @@ export const DocumentGrid = () => {
         .from("documents")
         .select(`
           *,
-          profile:profiles!documents_uploaded_by_fkey(first_name, last_name)
+          profile:profiles(first_name, last_name)
         `)
         .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
