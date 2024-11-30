@@ -10,6 +10,11 @@ import { DeleteButton } from "@/components/source-details/DeleteButton";
 import { ErrorLogs } from "@/components/source-details/ErrorLogs";
 import { toast } from "sonner";
 
+type DocumentIdentifiers = {
+  storage_path: string;
+  [key: string]: any;
+};
+
 const SourceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -33,7 +38,9 @@ const SourceDetails = () => {
   });
 
   const handleDownload = async () => {
-    if (!document?.identifiers?.storage_path) {
+    const identifiers = document?.identifiers as DocumentIdentifiers | null;
+    
+    if (!identifiers?.storage_path) {
       toast.error("No file path found");
       return;
     }
@@ -41,18 +48,18 @@ const SourceDetails = () => {
     try {
       const { data, error } = await supabase.storage
         .from('documents')
-        .download(document.identifiers.storage_path);
+        .download(identifiers.storage_path);
 
       if (error) throw error;
 
       // Create a download link and trigger it
       const url = URL.createObjectURL(data);
-      const a = document.createElement('a');
+      const a = window.document.createElement('a');
       a.href = url;
       a.download = document.name;
-      document.body.appendChild(a);
+      window.document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
+      window.document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
       toast.success("File download started");
