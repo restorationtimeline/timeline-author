@@ -114,7 +114,7 @@ export const Header = () => {
   return (
     <header className="w-full h-16 md:h-20 bg-primary border-b border-border/40 shadow-sm">
       <div className="container h-full flex items-center justify-between px-2 md:px-8">
-        <Link to="/" className="text-primary-foreground font-semibold hover:text-primary-foreground/90 transition-colors">
+        <Link to="/" className="text-primary-foreground font-semibold text-lg md:text-xl hover:text-primary-foreground/90 transition-colors">
           Restoration Timeline
         </Link>
         <div className="flex items-center gap-1 md:gap-4">
@@ -124,13 +124,13 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleFileUploadClick}
-                className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10 h-12 w-12"
               >
-                <Plus className="h-5 w-5" />
+                <Plus className="h-6 w-6" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Upload Files</p>
+              <p className="text-sm">Upload Files</p>
             </TooltipContent>
           </Tooltip>
 
@@ -140,13 +140,13 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10 h-12 w-12"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Logout</p>
+              <p className="text-sm">Logout</p>
             </TooltipContent>
           </Tooltip>
         </div>
