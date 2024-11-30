@@ -70,7 +70,7 @@ const SourceDetails = () => {
     return (
       <div>
         <Header />
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto px-4 md:px-8 py-0 md:py-12">
           <div className="animate-pulse space-y-4 max-w-2xl mx-auto">
             <div className="h-8 w-48 bg-gray-200 rounded"></div>
             <div className="h-32 bg-gray-200 rounded"></div>
@@ -84,7 +84,7 @@ const SourceDetails = () => {
     return (
       <div>
         <Header />
-        <div className="container mx-auto py-8 max-w-2xl">
+        <div className="container mx-auto px-4 md:px-8 py-0 md:py-12 max-w-2xl">
           <h1 className="text-2xl font-bold mb-4 text-red-500">Error loading source</h1>
           <p className="text-gray-600 mb-4">There was an error loading the document details.</p>
           <Button onClick={() => navigate(-1)}>Go Back</Button>
@@ -97,7 +97,7 @@ const SourceDetails = () => {
     return (
       <div>
         <Header />
-        <div className="container mx-auto py-8 max-w-2xl">
+        <div className="container mx-auto px-4 md:px-8 py-0 md:py-12 max-w-2xl">
           <h1 className="text-2xl font-bold mb-4">Source not found</h1>
           <Button onClick={() => navigate(-1)}>Go Back</Button>
         </div>
@@ -105,26 +105,10 @@ const SourceDetails = () => {
     );
   }
 
-  // Calculate completed steps based on status
-  const getCompletedSteps = () => {
-    switch (documentData.status) {
-      case 'completed':
-        return processingSteps.length;
-      case 'processing':
-        return 2;
-      case 'failed':
-        return 0;
-      default:
-        return 1;
-    }
-  };
-
-  const completedSteps = getCompletedSteps();
-
   return (
     <div>
       <Header />
-      <div className="container mx-auto py-12">
+      <div className="container mx-auto px-4 md:px-8 py-0 md:py-12">
         <div className="max-w-2xl mx-auto pt-4">
           <Button
             variant="ghost"
