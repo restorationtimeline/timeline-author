@@ -20,7 +20,7 @@ type Document = {
   error_logs: string[] | null;
   identifiers: Record<string, unknown> | null;
   last_updated: string | null;
-  profile: Profile | null;
+  profile: Profile;
 };
 
 type Profile = {
@@ -53,14 +53,13 @@ export const DocumentGrid = () => {
         .from("documents")
         .select(`
           *,
-          profile:profiles(id, first_name, last_name)
+          profile:profiles!documents_uploaded_by_fkey(id, first_name, last_name)
         `)
-        .eq('uploaded_by', docs.profile.id)
         .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
-      return docs as Document[];
+      return (docs || []) as Document[];
     },
   });
 
