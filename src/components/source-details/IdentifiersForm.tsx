@@ -4,16 +4,30 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, X } from "lucide-react";
+import { Json } from "@/integrations/supabase/types";
 
 type Identifiers = Record<string, string>;
 
 interface IdentifiersFormProps {
   documentId: string;
-  initialIdentifiers?: Identifiers;
+  initialIdentifiers?: Json;
 }
 
 export const IdentifiersForm = ({ documentId, initialIdentifiers = {} }: IdentifiersFormProps) => {
-  const [identifiers, setIdentifiers] = useState<Identifiers>(initialIdentifiers);
+  // Convert the Json type to Identifiers type safely
+  const parseIdentifiers = (json: Json): Identifiers => {
+    if (typeof json === 'object' && json !== null) {
+      return Object.entries(json).reduce((acc, [key, value]) => {
+        if (typeof value === 'string') {
+          acc[key] = value;
+        }
+        return acc;
+      }, {} as Identifiers);
+    }
+    return {};
+  };
+
+  const [identifiers, setIdentifiers] = useState<Identifiers>(parseIdentifiers(initialIdentifiers));
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
 
