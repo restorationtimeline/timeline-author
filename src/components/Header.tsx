@@ -1,15 +1,17 @@
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
+import { useRef } from "react";
 
 export const Header = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogout = async () => {
     try {
@@ -26,8 +28,25 @@ export const Header = () => {
     }
   };
 
+  const handleFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      // This will trigger the existing file upload functionality
+      const event = new DragEvent('drop', { bubbles: true });
+      Object.defineProperty(event, 'dataTransfer', {
+        value: {
+          files: e.target.files
+        }
+      });
+      document.querySelector('.border-dashed')?.dispatchEvent(event);
+    }
+  };
+
   return (
-    <header className="w-full h-10 bg-primary border-b border-border/40 shadow-sm">
+    <header className="w-full h-16 md:h-20 bg-primary border-b border-border/40 shadow-sm">
       <div className="container h-full flex items-center justify-between">
         <Link to="/" className="text-primary-foreground font-semibold hover:text-primary-foreground/90 transition-colors">
           Restoration Timeline
@@ -48,6 +67,23 @@ export const Header = () => {
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleFileUpload}
+                className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10"
+              >
+                <Plus className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Upload Files</p>
+            </TooltipContent>
+          </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -64,6 +100,14 @@ export const Header = () => {
             </TooltipContent>
           </Tooltip>
         </div>
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileInputChange}
+          multiple
+        />
       </div>
     </header>
   );
