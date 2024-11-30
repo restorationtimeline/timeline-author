@@ -34,12 +34,9 @@ serve(async (req) => {
     )
 
     const fileExt = file.name.split('.').pop()
-    const fileName = `${crypto.randomUUID()}.${fileExt}`
-    const filePath = `${fileName}`
-
-
-    // Get the document name without extension
-    const documentName = getDocumentName(file.name);
+    const documentId = crypto.randomUUID()
+    const fileName = `${documentId}.${fileExt}`
+    const filePath = `${documentId}/${fileName}` // Store in UUID folder
 
     // Upload file to storage
     const { data: storageData, error: uploadError } = await supabase.storage
@@ -74,14 +71,21 @@ serve(async (req) => {
       )
     }
 
+    // Get the document name without extension
+    const documentName = getDocumentName(file.name);
+
     // Insert document record with name without extension
     const { data: document, error: dbError } = await supabase
       .from('documents')
       .insert({
+        id: documentId, // Use the same UUID for the document record
         name: documentName,
         type: file.type,
         uploaded_by: user.id,
         status: 'pending',
+        identifiers: {
+          storage_path: filePath
+        }
       })
       .select()
       .single()
