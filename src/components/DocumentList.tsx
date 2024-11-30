@@ -95,7 +95,7 @@ export const DocumentList = () => {
           <div key={status} className="space-y-4">
             <div className="flex items-center gap-2">
               <StatusIcon status={status} />
-              <h2 className="text-2xl font-semibold text-foreground">
+              <h2 className="text-lg font-medium text-foreground">
                 {StatusLabel({ status })} ({docs.length})
               </h2>
             </div>
