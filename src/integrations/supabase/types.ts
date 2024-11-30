@@ -19,6 +19,7 @@ export type Database = {
           last_updated: string | null
           name: string
           status: Database["public"]["Enums"]["document_status_enum"] | null
+          storage_path: string | null
           type: string | null
           uploaded_at: string | null
           uploaded_by: string | null
@@ -32,6 +33,7 @@ export type Database = {
           last_updated?: string | null
           name: string
           status?: Database["public"]["Enums"]["document_status_enum"] | null
+          storage_path?: string | null
           type?: string | null
           uploaded_at?: string | null
           uploaded_by?: string | null
@@ -45,6 +47,7 @@ export type Database = {
           last_updated?: string | null
           name?: string
           status?: Database["public"]["Enums"]["document_status_enum"] | null
+          storage_path?: string | null
           type?: string | null
           uploaded_at?: string | null
           uploaded_by?: string | null

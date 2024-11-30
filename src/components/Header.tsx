@@ -55,13 +55,11 @@ export const Header = () => {
         updateItem(file, { status: 'uploading' });
 
         const fileExt = file.name.split('.').pop();
-        const documentId = crypto.randomUUID();
-        const fileName = `${documentId}.${fileExt}`;
-        const filePath = `${documentId}/${fileName}`; // Store in UUID folder
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
         
         const { data: storageData, error: uploadError } = await supabase.storage
           .from('documents')
-          .upload(filePath, file, {
+          .upload(fileName, file, {
             contentType: file.type,
             upsert: false
           });
@@ -77,9 +75,7 @@ export const Header = () => {
             type: file.type,
             status: 'pending',
             uploaded_by: session.user.id,
-            identifiers: {
-              storage_path: filePath
-            }
+            storage_path: fileName
           });
 
         if (dbError) throw dbError;

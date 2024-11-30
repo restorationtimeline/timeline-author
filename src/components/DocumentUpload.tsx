@@ -107,9 +107,7 @@ export const DocumentUpload = () => {
               type: file.type,
               status: 'pending',
               uploaded_by: session.user.id,
-              identifiers: {
-                storage_path: fileName
-              }
+              storage_path: fileName
             })
             .select()
             .single();

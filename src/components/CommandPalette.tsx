@@ -125,9 +125,7 @@ export const CommandPalette = () => {
             type: file.type,
             status: 'pending',
             uploaded_by: session.user.id,
-            identifiers: {
-              storage_path: filePath
-            }
+            storage_path: filePath
           });
 
         if (dbError) throw dbError;

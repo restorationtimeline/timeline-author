@@ -11,11 +11,6 @@ import { ErrorLogs } from "@/components/source-details/ErrorLogs";
 import { IdentifiersForm } from "@/components/source-details/IdentifiersForm";
 import { toast } from "sonner";
 
-type DocumentIdentifiers = {
-  storage_path: string;
-  [key: string]: any;
-};
-
 const SourceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -39,20 +34,15 @@ const SourceDetails = () => {
   });
 
   const handleDownload = async () => {
-    const identifiers = documentData?.identifiers as DocumentIdentifiers | null;
-    
-    if (!identifiers?.storage_path) {
+    if (!documentData?.storage_path) {
       toast.error("No file path found");
       return;
     }
 
     try {
-      // Get the storage path from identifiers
-      const storagePath = identifiers.storage_path;
-      
       const { data, error } = await supabase.storage
         .from('documents')
-        .download(storagePath);
+        .download(documentData.storage_path);
 
       if (error) {
         console.error("Download error:", error);
