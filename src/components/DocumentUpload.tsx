@@ -119,4 +119,5 @@ export const DocumentUpload = () => {
         Select Files
       </label>
     </div>
+  );
 };
