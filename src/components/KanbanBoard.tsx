@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "./ui/card";
-import { FileText, Clock, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
+import { Clock, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
@@ -127,11 +127,8 @@ export const KanbanBoard = () => {
                   className="p-2 mb-2 hover:shadow-md transition-shadow cursor-pointer bg-background dark:bg-gray-700/50"
                   onClick={() => navigate(`/sources/${doc.id}`)}
                 >
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-3.5 w-3.5 text-primary" />
-                    <div>
-                      <h4 className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{doc.name}</h4>
-                    </div>
+                  <div>
+                    <h4 className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{doc.name}</h4>
                   </div>
                 </Card>
               ))}
