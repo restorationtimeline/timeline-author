@@ -112,9 +112,9 @@ export const Header = () => {
   };
 
   return (
-    <header className="w-full h-16 md:h-20 bg-primary border-b border-border/40 shadow-sm">
+    <header className="w-full h-16 md:h-20 bg-white border-b border-border/40 shadow-sm">
       <div className="container h-full flex items-center justify-between px-2 md:px-8">
-        <Link to="/" className="text-primary-foreground font-semibold text-lg md:text-xl hover:text-primary-foreground/90 transition-colors">
+        <Link to="/" className="text-gray-700 font-semibold text-lg md:text-xl hover:text-gray-900 transition-colors">
           Restoration Timeline
         </Link>
         <div className="flex items-center gap-1 md:gap-4">
@@ -124,7 +124,7 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleFileUploadClick}
-                className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10 h-12 w-12"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 h-12 w-12"
               >
                 <Plus className="h-6 w-6" />
               </Button>
@@ -140,7 +140,7 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10 h-12 w-12"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 h-12 w-12"
               >
                 <LogOut className="h-5 w-5" />
               </Button>
