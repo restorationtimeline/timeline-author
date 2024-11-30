@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import SourceDetails from "./pages/SourceDetails";
 import { supabase } from "./integrations/supabase/client";
+import { ThemeProvider } from "./hooks/use-theme";
 
 const queryClient = new QueryClient();
 
@@ -32,19 +33,21 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <React.StrictMode>
-        <BrowserRouter>
-          <TooltipProvider>
-            <AuthWrapper>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/" element={<Index />} />
-                <Route path="/sources/:id" element={<SourceDetails />} />
-              </Routes>
-            </AuthWrapper>
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
-        </BrowserRouter>
+        <ThemeProvider defaultTheme="system" storageKey="app-theme">
+          <BrowserRouter>
+            <TooltipProvider>
+              <AuthWrapper>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/" element={<Index />} />
+                  <Route path="/sources/:id" element={<SourceDetails />} />
+                </Routes>
+              </AuthWrapper>
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </BrowserRouter>
+        </ThemeProvider>
       </React.StrictMode>
     </QueryClientProvider>
   );
