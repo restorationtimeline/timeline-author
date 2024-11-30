@@ -20,10 +20,12 @@ type Document = {
   error_logs: string[] | null;
   identifiers: Record<string, unknown> | null;
   last_updated: string | null;
-  profiles?: {
-    first_name: string | null;
-    last_name: string | null;
-  } | null;
+};
+
+type Profile = {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
 };
 
 const StatusIcon = ({ status }: { status: Document["status"] }) => {
@@ -48,12 +50,15 @@ export const DocumentGrid = () => {
     queryFn: async () => {
       const { data: docs, error } = await supabase
         .from("documents")
-        .select("*, profiles:uploaded_by(first_name, last_name)")
+        .select(`
+          *,
+          profile:profiles!documents_uploaded_by_fkey(first_name, last_name)
+        `)
         .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
-      return docs as Document[];
+      return (docs || []) as (Document & { profile: Profile | null })[];
     },
   });
 
@@ -83,7 +88,7 @@ export const DocumentGrid = () => {
           schema: 'public',
           table: 'documents'
         },
-        (payload) => {
+        () => {
           queryClient.invalidateQueries({ queryKey: ['documents'] });
         }
       )
@@ -115,11 +120,12 @@ export const DocumentGrid = () => {
             <div className="flex items-center gap-2">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-primary/10 text-primary">
-                  {doc.profiles?.first_name?.[0]}{doc.profiles?.last_name?.[0]}
+                  {doc.profile?.first_name?.[0] || ''}
+                  {doc.profile?.last_name?.[0] || ''}
                 </AvatarFallback>
               </Avatar>
               <span className="text-sm text-gray-600">
-                {doc.profiles?.first_name} {doc.profiles?.last_name}
+                {doc.profile?.first_name} {doc.profile?.last_name}
               </span>
             </div>
             {doc.status === 'pending' && (
