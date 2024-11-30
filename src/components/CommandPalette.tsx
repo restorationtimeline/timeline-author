@@ -32,11 +32,11 @@ export const CommandPalette = () => {
   };
 
   const { data: searchResults, isLoading } = useQuery({
-    queryKey: ["documents", search],
+    queryKey: ["sources", search],
     queryFn: async () => {
       if (!isValidUrl(search)) return [];
       const { data, error } = await supabase
-        .from("documents")
+        .from("sources")
         .select("*")
         .ilike("identifiers->>url", `%${search}%`)
         .limit(5);
@@ -50,7 +50,7 @@ export const CommandPalette = () => {
   const handleCreateDocument = async (url: string) => {
     try {
       const { data, error } = await supabase
-        .from("documents")
+        .from("sources")
         .insert({
           name: url,
           type: "url",
@@ -119,7 +119,7 @@ export const CommandPalette = () => {
         const baseName = file.name.split('.')[0];
         
         const { error: dbError } = await supabase
-          .from('documents')
+          .from('sources')
           .insert({
             name: baseName,
             type: file.type,
@@ -209,7 +209,7 @@ export const CommandPalette = () => {
                 <CommandItem
                   key={doc.id}
                   onSelect={() => {
-                    navigate(`/document/${doc.id}`);
+                    navigate(`/sources/${doc.id}`);
                     setOpen(false);
                   }}
                 >

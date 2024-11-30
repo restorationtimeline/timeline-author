@@ -15,7 +15,7 @@ export const DeleteButton = ({ documentId }: { documentId: string }) => {
   const deleteMutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
-        .from("documents")
+        .from("sources")
         .update({ deleted_at: new Date().toISOString() })
         .eq("id", documentId);
       

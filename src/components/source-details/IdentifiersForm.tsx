@@ -14,7 +14,6 @@ interface IdentifiersFormProps {
 }
 
 export const IdentifiersForm = ({ documentId, initialIdentifiers = {} }: IdentifiersFormProps) => {
-  // Convert the Json type to Identifiers type safely
   const parseIdentifiers = (json: Json): Identifiers => {
     if (typeof json === 'object' && json !== null) {
       return Object.entries(json).reduce((acc, [key, value]) => {
@@ -44,7 +43,7 @@ export const IdentifiersForm = ({ documentId, initialIdentifiers = {} }: Identif
 
     try {
       const { error } = await supabase
-        .from("documents")
+        .from("sources")
         .update({ identifiers: updatedIdentifiers })
         .eq("id", documentId);
 
@@ -66,7 +65,7 @@ export const IdentifiersForm = ({ documentId, initialIdentifiers = {} }: Identif
 
     try {
       const { error } = await supabase
-        .from("documents")
+        .from("sources")
         .update({ identifiers: updatedIdentifiers })
         .eq("id", documentId);
 

@@ -16,10 +16,10 @@ const SourceDetails = () => {
   const navigate = useNavigate();
 
   const { data: documentData, isLoading, error } = useQuery({
-    queryKey: ["document", id],
+    queryKey: ["source", id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("documents")
+        .from("sources")
         .select("*")
         .eq("id", id)
         .single();
@@ -124,7 +124,7 @@ const SourceDetails = () => {
               initialValue={documentData.name}
               onSave={async (newName) => {
                 const { error } = await supabase
-                  .from("documents")
+                  .from("sources")
                   .update({ name: newName })
                   .eq("id", id);
                 
@@ -133,7 +133,7 @@ const SourceDetails = () => {
             />
 
             <DocumentMetadata document={documentData} />
-            <ErrorLogs errors={documentData.error_logs} />
+            <ErrorLogs errors={documentData.error_logs || []} />
             
             <IdentifiersForm 
               documentId={documentData.id} 
