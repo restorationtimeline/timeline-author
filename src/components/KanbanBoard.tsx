@@ -40,14 +40,14 @@ const columns = [
         <Button
           variant="ghost"
           size="sm"
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors border border-gray-200"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors border border-gray-200 dark:border-gray-700"
           disabled={failedCount === 0}
           onClick={() => {
             toast.info("Retrying failed documents...");
           }}
           aria-label="Retry failed documents"
         >
-          <RefreshCw className={`h-3 w-3 ${failedCount === 0 ? 'text-gray-300' : 'text-blue-500'}`} />
+          <RefreshCw className={`h-3 w-3 ${failedCount === 0 ? 'text-gray-300 dark:text-gray-600' : 'text-blue-500'}`} />
         </Button>
       </div>
     ),
@@ -102,7 +102,7 @@ export const KanbanBoard = () => {
   }, [queryClient]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="text-foreground">Loading...</div>;
   }
 
   const failedDocumentsCount = documents?.filter(doc => doc.status === "failed").length || 0;
@@ -110,11 +110,11 @@ export const KanbanBoard = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {columns.map((column) => (
-        <div key={column.id} className="flex flex-col bg-white p-3 rounded-lg min-h-[300px] md:min-h-[600px] shadow-sm">
+        <div key={column.id} className="flex flex-col bg-white dark:bg-gray-800 p-3 rounded-lg min-h-[300px] md:min-h-[600px] shadow-sm border border-border/40">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
               {column.icon}
-              <h3 className="text-sm font-medium">{column.title}</h3>
+              <h3 className="text-sm font-medium text-foreground">{column.title}</h3>
             </div>
             {column.action && column.action(failedDocumentsCount)}
           </div>
@@ -124,13 +124,13 @@ export const KanbanBoard = () => {
               .map((doc) => (
                 <Card
                   key={doc.id}
-                  className="p-2 mb-2 hover:shadow-md transition-shadow cursor-pointer"
+                  className="p-2 mb-2 hover:shadow-md transition-shadow cursor-pointer bg-background dark:bg-gray-700/50"
                   onClick={() => navigate(`/sources/${doc.id}`)}
                 >
                   <div className="flex items-center gap-2">
                     <FileText className="h-3.5 w-3.5 text-primary" />
                     <div>
-                      <h4 className="text-xs font-medium group-hover:text-primary transition-colors">{doc.name}</h4>
+                      <h4 className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{doc.name}</h4>
                     </div>
                   </div>
                 </Card>
