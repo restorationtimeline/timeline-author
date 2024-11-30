@@ -115,7 +115,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="w-full h-16 md:h-20 bg-background border-b border-border/40 shadow-sm">
+    <header className="w-full h-16 md:h-10 bg-background border-b border-border/40 shadow-sm">
       <div className="container h-full flex items-center justify-between px-2 md:px-8">
         <Link to="/" className="text-foreground font-semibold text-lg md:text-xl hover:text-foreground/90 transition-colors">
           Restoration Timeline
@@ -127,9 +127,9 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleFileUploadClick}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12"
+                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12 md:h-8 md:w-8"
               >
-                <Plus className="h-6 w-6" />
+                <Plus className="h-6 w-6 md:h-4 md:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -143,12 +143,12 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12"
+                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12 md:h-8 md:w-8"
               >
                 {theme === "dark" ? (
-                  <Sun className="h-5 w-5" />
+                  <Sun className="h-5 w-5 md:h-4 md:w-4" />
                 ) : (
-                  <Moon className="h-5 w-5" />
+                  <Moon className="h-5 w-5 md:h-4 md:w-4" />
                 )}
               </Button>
             </TooltipTrigger>
@@ -163,9 +163,9 @@ export const Header = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12"
+                className="text-foreground/60 hover:text-foreground hover:bg-accent h-12 w-12 md:h-8 md:w-8"
               >
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-5 w-5 md:h-4 md:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
