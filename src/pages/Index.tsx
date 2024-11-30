@@ -15,16 +15,67 @@ import { useUploadQueueStore } from "@/stores/uploadQueueStore";
 
 const STORAGE_KEY = "preferred-view";
 
+const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActiveView: (view: string) => void }) => {
+  return (
+    <TabsList className="bg-white dark:bg-gray-800 border">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <TabsTrigger 
+              value="grid" 
+              className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
+            >
+              <Grid2X2 className="h-4 w-4" />
+              Grid
+            </TabsTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Grid View (⌘J)</p>
+          </TooltipContent>
+        </Tooltip>
+        
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <TabsTrigger 
+              value="kanban" 
+              className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
+            >
+              <Columns3 className="h-4 w-4" />
+              Kanban
+            </TabsTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Kanban View (⌘K)</p>
+          </TooltipContent>
+        </Tooltip>
+        
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <TabsTrigger 
+              value="list" 
+              className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
+            >
+              <List className="h-4 w-4" />
+              List
+            </TabsTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>List View (⌘L)</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </TabsList>
+  );
+};
+
 const Index = () => {
   const [activeView, setActiveView] = useState(() => {
-    // Initialize from localStorage, fallback to "grid"
     return localStorage.getItem(STORAGE_KEY) || "grid";
   });
   const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
   const uploadQueue = useUploadQueueStore(state => state.items);
 
-  // Save to localStorage whenever activeView changes
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, activeView);
   }, [activeView]);
@@ -133,56 +184,9 @@ const Index = () => {
       <div className="container mx-auto">
         <div className="flex flex-col space-y-8 py-8">
           <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-6">
               <h2 className="text-2xl font-semibold text-foreground">Sources</h2>
-              <TabsList className="bg-white dark:bg-gray-800 border">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger 
-                        value="grid" 
-                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
-                      >
-                        <Grid2X2 className="h-4 w-4" />
-                        Grid
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Grid View (⌘J)</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger 
-                        value="kanban" 
-                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
-                      >
-                        <Columns3 className="h-4 w-4" />
-                        Kanban
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Kanban View (⌘K)</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger 
-                        value="list" 
-                        className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
-                      >
-                        <List className="h-4 w-4" />
-                        List
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>List View (⌘L)</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </TabsList>
+              <ViewToggle activeView={activeView} setActiveView={setActiveView} />
             </div>
             
             {uploadQueue.length > 0 && (
