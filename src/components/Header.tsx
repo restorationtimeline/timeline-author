@@ -1,4 +1,3 @@
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { LogOut, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -52,22 +51,6 @@ export const Header = () => {
           Restoration Timeline
         </Link>
         <div className="flex items-center gap-1 md:gap-4">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={cn(
-                    "text-primary-foreground/90 hover:text-primary-foreground px-2 md:px-4",
-                    "transition-colors"
-                  )}
-                  href="/"
-                >
-                  Documents
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
