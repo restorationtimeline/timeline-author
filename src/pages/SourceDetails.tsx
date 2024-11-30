@@ -46,20 +46,26 @@ const SourceDetails = () => {
     }
 
     try {
+      // Get the storage path from identifiers
+      const storagePath = identifiers.storage_path;
+      
       const { data, error } = await supabase.storage
         .from('documents')
-        .download(identifiers.storage_path);
+        .download(storagePath);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Download error:", error);
+        throw error;
+      }
 
       // Create a download link and trigger it
       const url = URL.createObjectURL(data);
-      const a = window.document.createElement('a');
+      const a = document.createElement('a');
       a.href = url;
       a.download = document.name;
-      window.document.body.appendChild(a);
+      document.body.appendChild(a);
       a.click();
-      window.document.body.removeChild(a);
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
       toast.success("File download started");
