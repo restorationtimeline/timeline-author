@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export const processingSteps = [
+  "Split Content into Individual Pages",
   "Extract Content and Metadata",
   "Categorize the Source",
   "Link to Online Identifiers",
@@ -30,8 +31,6 @@ export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistP
         return 1;
     }
   };
-
-  const completedSteps = getCompletedSteps();
 
   const handleRunNextStep = async (stepIndex: number) => {
     try {
