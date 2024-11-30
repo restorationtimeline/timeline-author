@@ -1,11 +1,12 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { FileText, Clock, CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
 import { Card } from "./ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { getFriendlyMimeType } from "@/utils/mimeTypes";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Button } from "./ui/button";
 
 type Document = {
   id: string;
@@ -13,6 +14,7 @@ type Document = {
   status: "pending" | "processing" | "completed" | "failed";
   type: string;
   uploaded_at: string;
+  uploaded_by: string;
 };
 
 const StatusIcon = ({ status }: { status: Document["status"] }) => {
@@ -35,16 +37,32 @@ export const DocumentGrid = () => {
   const { data: documents, isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: docs, error } = await supabase
         .from("documents")
-        .select("*")
+        .select("*, profiles:uploaded_by(first_name, last_name)")
         .is('deleted_at', null)
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
-      return data as Document[];
+      return docs as (Document & { profiles: { first_name: string; last_name: string } })[];
     },
   });
+
+  const handleProcessing = async (docId: string) => {
+    try {
+      const { error } = await supabase
+        .from('documents')
+        .update({ status: 'processing' })
+        .eq('id', docId);
+      
+      if (error) throw error;
+      
+      toast.success("Started processing document");
+    } catch (error) {
+      toast.error("Failed to start processing");
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const channel = supabase
@@ -83,10 +101,33 @@ export const DocumentGrid = () => {
             <FileText className="h-6 w-6 text-primary" />
             <StatusIcon status={doc.status} />
           </div>
-          <h3 className="font-medium text-lg mb-2">{doc.name}</h3>
-          <p className="text-sm text-gray-500">
-            {getFriendlyMimeType(doc.type)} • {new Date(doc.uploaded_at).toLocaleDateString()}
-          </p>
+          <h3 className="font-medium text-lg mb-3">{doc.name}</h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  {doc.profiles?.first_name?.[0]}{doc.profiles?.last_name?.[0]}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm text-gray-600">
+                {doc.profiles?.first_name} {doc.profiles?.last_name}
+              </span>
+            </div>
+            {doc.status === 'pending' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="ml-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleProcessing(doc.id);
+                }}
+              >
+                Process
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </Card>
       ))}
     </div>
