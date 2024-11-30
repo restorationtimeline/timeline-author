@@ -9,7 +9,7 @@ import { Header } from "@/components/Header";
 import { DeleteButton } from "@/components/source-details/DeleteButton";
 import { ErrorLogs } from "@/components/source-details/ErrorLogs";
 import { IdentifiersForm } from "@/components/source-details/IdentifiersForm";
-import { ProcessingChecklist } from "@/components/source-details/ProcessingChecklist";
+import { ProcessingChecklist, processingSteps } from "@/components/source-details/ProcessingChecklist";
 import { toast } from "sonner";
 
 const SourceDetails = () => {
