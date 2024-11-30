@@ -13,11 +13,21 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { UploadQueue } from "@/components/UploadQueue";
 import { useUploadQueueStore } from "@/stores/uploadQueueStore";
 
+const STORAGE_KEY = "preferred-view";
+
 const Index = () => {
-  const [activeView, setActiveView] = useState("grid");
+  const [activeView, setActiveView] = useState(() => {
+    // Initialize from localStorage, fallback to "grid"
+    return localStorage.getItem(STORAGE_KEY) || "grid";
+  });
   const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
   const uploadQueue = useUploadQueueStore(state => state.items);
+
+  // Save to localStorage whenever activeView changes
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, activeView);
+  }, [activeView]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
