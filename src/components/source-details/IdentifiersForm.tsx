@@ -80,7 +80,7 @@ export const IdentifiersForm = ({ documentId, initialIdentifiers = {} }: Identif
   };
 
   return (
-    <div className="space-y-4">
+    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-4">
       <h3 className="text-lg font-medium">Identifiers</h3>
       
       <div className="space-y-2">
