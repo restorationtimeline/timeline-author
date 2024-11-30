@@ -5,9 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const processingSteps = [
-  "Split Content into Individual Pages",
-  "Extract Content and Metadata",
   "Categorize the Source",
+  "Extract Content and Metadata",
+  "Split Content into Individual Pages",
   "Link to Online Identifiers",
   "Semantically Chunk Content",
   "Create Embeddings",
