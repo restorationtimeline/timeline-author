@@ -60,7 +60,7 @@ export const DeleteButton = ({ documentId }: { documentId: string }) => {
     <Button
       variant="destructive"
       size="lg"
-      className="w-full h-16 relative overflow-hidden touch-none"
+      className="w-full h-16 relative overflow-hidden touch-none select-none"
       onPointerDown={handleHoldStart}
       onPointerUp={handleHoldEnd}
       onPointerLeave={handleHoldEnd}
