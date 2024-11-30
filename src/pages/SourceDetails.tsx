@@ -2,12 +2,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { DocumentMetadata } from "@/components/DocumentMetadata";
 import { EditableTitle } from "@/components/EditableTitle";
 import { Header } from "@/components/Header";
 import { DeleteButton } from "@/components/source-details/DeleteButton";
 import { ErrorLogs } from "@/components/source-details/ErrorLogs";
+import { toast } from "sonner";
 
 const SourceDetails = () => {
   const { id } = useParams();
@@ -30,6 +31,36 @@ const SourceDetails = () => {
     },
     retry: 1,
   });
+
+  const handleDownload = async () => {
+    if (!document?.identifiers?.storage_path) {
+      toast.error("No file path found");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .download(document.identifiers.storage_path);
+
+      if (error) throw error;
+
+      // Create a download link and trigger it
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = document.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success("File download started");
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download file");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -100,7 +131,15 @@ const SourceDetails = () => {
             <DocumentMetadata document={document} />
             <ErrorLogs errors={document.error_logs} />
 
-            <div className="mt-6">
+            <div className="mt-6 space-y-4">
+              <Button 
+                size="lg" 
+                className="w-full h-16 bg-green-600 hover:bg-green-700"
+                onClick={handleDownload}
+              >
+                <Download className="h-5 w-5 mr-2" />
+                Download File
+              </Button>
               <DeleteButton documentId={document.id} />
             </div>
           </div>
