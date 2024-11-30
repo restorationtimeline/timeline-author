@@ -1,10 +1,11 @@
+import React from "react";
 import { DocumentList } from "@/components/DocumentList";
 import { DocumentGrid } from "@/components/DocumentGrid";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { Header } from "@/components/Header";
 import { CommandPalette } from "@/components/CommandPalette";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Grid2X2, List, Kanban } from "lucide-react";
+import { Grid2X2, List, Columns3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -147,7 +148,7 @@ const Index = () => {
                         value="kanban" 
                         className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium"
                       >
-                        <Kanban className="h-4 w-4" />
+                        <Columns3 className="h-4 w-4" />
                         Kanban
                       </TabsTrigger>
                     </TooltipTrigger>
