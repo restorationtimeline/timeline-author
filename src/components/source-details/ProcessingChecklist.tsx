@@ -4,7 +4,6 @@ import { toast } from "sonner";
 
 export const processingSteps = [
   "Extract Content and Metadata",
-  "Preprocessing",
   "Categorize the Source",
   "Link to Online Identifiers",
   "Semantically Chunk Content",
@@ -49,27 +48,24 @@ export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistP
     <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-3">
       <h3 className="text-lg font-medium mb-4">Processing Status</h3>
       {processingSteps.map((step, index) => (
-        <div key={step} className="flex items-center justify-between group">
-          <div className="flex items-center space-x-3">
-            {index < completedSteps ? (
-              <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-            ) : (
-              <Circle className="h-5 w-5 text-gray-400 flex-shrink-0" />
-            )}
-            <span className={index < completedSteps ? "text-foreground" : "text-muted-foreground"}>
-              {step}
-            </span>
-          </div>
-          {index === completedSteps && status !== 'completed' && status !== 'failed' && (
+        <div key={step} className="flex items-center space-x-3">
+          {index === completedSteps ? (
             <Button
               variant="ghost"
-              size="sm"
-              className="opacity-0 group-hover:opacity-100 transition-opacity"
+              size="icon"
+              className="h-5 w-5 p-0"
               onClick={() => handleRunNextStep(index)}
             >
-              <Play className="h-4 w-4" />
+              <Play className="h-5 w-5 text-primary" />
             </Button>
+          ) : index < completedSteps ? (
+            <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
+          ) : (
+            <Circle className="h-5 w-5 text-gray-400 flex-shrink-0" />
           )}
+          <span className={index < completedSteps ? "text-foreground" : "text-muted-foreground"}>
+            {step}
+          </span>
         </div>
       ))}
     </div>
