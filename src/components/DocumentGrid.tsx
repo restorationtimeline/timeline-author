@@ -1,11 +1,10 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { Card } from "./ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
 type Document = {
   id: string;
@@ -80,13 +79,9 @@ export const DocumentGrid = () => {
           onClick={() => navigate(`/sources/${doc.id}`)}
         >
           <div className="flex items-center justify-between mb-3">
-            <FileText className="h-6 w-6 text-primary" />
+            <h3 className="font-medium text-lg">{doc.name}</h3>
             <StatusIcon status={doc.status} />
           </div>
-          <h3 className="font-medium text-lg mb-2">{doc.name}</h3>
-          <p className="text-sm text-gray-500">
-            {getFriendlyMimeType(doc.type)} • {new Date(doc.uploaded_at).toLocaleDateString()}
-          </p>
         </Card>
       ))}
     </div>
