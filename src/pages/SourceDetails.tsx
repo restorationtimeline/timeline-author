@@ -19,7 +19,7 @@ const SourceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: document, isLoading, error } = useQuery({
+  const { data: documentData, isLoading, error } = useQuery({
     queryKey: ["document", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -38,7 +38,7 @@ const SourceDetails = () => {
   });
 
   const handleDownload = async () => {
-    const identifiers = document?.identifiers as DocumentIdentifiers | null;
+    const identifiers = documentData?.identifiers as DocumentIdentifiers | null;
     
     if (!identifiers?.storage_path) {
       toast.error("No file path found");
@@ -62,7 +62,7 @@ const SourceDetails = () => {
       const url = URL.createObjectURL(data);
       const a = document.createElement('a');
       a.href = url;
-      a.download = document.name;
+      a.download = documentData.name;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -102,7 +102,7 @@ const SourceDetails = () => {
     );
   }
 
-  if (!document) {
+  if (!documentData) {
     return (
       <div>
         <Header />
@@ -130,7 +130,7 @@ const SourceDetails = () => {
 
           <div className="space-y-6">
             <EditableTitle
-              initialValue={document.name}
+              initialValue={documentData.name}
               onSave={async (newName) => {
                 const { error } = await supabase
                   .from("documents")
@@ -141,8 +141,8 @@ const SourceDetails = () => {
               }}
             />
 
-            <DocumentMetadata document={document} />
-            <ErrorLogs errors={document.error_logs} />
+            <DocumentMetadata document={documentData} />
+            <ErrorLogs errors={documentData.error_logs} />
 
             <div className="mt-6 space-y-4">
               <Button 
@@ -153,7 +153,7 @@ const SourceDetails = () => {
                 <Download className="h-5 w-5 mr-2" />
                 Download File
               </Button>
-              <DeleteButton documentId={document.id} />
+              <DeleteButton documentId={documentData.id} />
             </div>
           </div>
         </div>
