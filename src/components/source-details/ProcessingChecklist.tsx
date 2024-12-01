@@ -20,7 +20,7 @@ interface ProcessingChecklistProps {
 
 export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistProps) => {
   const { data: tasks, isLoading } = useProcessingTasks(documentId);
-  const { handleRunStep } = useStepExecution(documentId);
+  const { handleRunStep, handleResetStep } = useStepExecution(documentId);
 
   const getStepStatus = (stepIndex: number) => {
     if (!tasks) return 'pending';
@@ -63,6 +63,7 @@ export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistP
             isNext={isNext}
             isCompleted={isCompleted}
             onRunStep={() => handleRunStep(step)}
+            onResetStep={() => handleResetStep(step)}
           />
         );
       })}

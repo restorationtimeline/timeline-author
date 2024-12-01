@@ -34,7 +34,7 @@ export const useProcessingTasks = (documentId: string) => {
           queryClient.invalidateQueries({ queryKey: ['tasks', documentId] });
           
           // Show toast notifications for task status changes
-          if (payload.new && payload.new.status !== payload.old?.status) {
+          if (payload.new && payload.old && payload.new.status !== payload.old.status) {
             const taskName = payload.new.task_name;
             switch (payload.new.status) {
               case 'in_progress':
@@ -67,7 +67,7 @@ export const useProcessingTasks = (documentId: string) => {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      return data as Task[];
     }
   });
 };

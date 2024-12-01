@@ -51,5 +51,29 @@ export const useStepExecution = (documentId: string) => {
     }
   };
 
-  return { handleRunStep };
+  const handleResetStep = async (stepName: string) => {
+    try {
+      const loadingToast = toast.loading(`Resetting ${stepName}...`);
+      
+      const { error } = await supabase
+        .from('tasks')
+        .update({ 
+          status: 'pending',
+          started_at: null,
+          completed_at: null
+        })
+        .eq('source_id', documentId)
+        .eq('task_name', stepName);
+
+      if (error) throw error;
+
+      toast.dismiss(loadingToast);
+      toast.success(`${stepName} reset successfully`);
+    } catch (error) {
+      console.error('Error resetting task:', error);
+      toast.error("Failed to reset task");
+    }
+  };
+
+  return { handleRunStep, handleResetStep };
 };
