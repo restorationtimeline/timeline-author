@@ -21,7 +21,7 @@ const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActi
         <TooltipTrigger asChild>
           <TabsTrigger 
             value="grid" 
-            className="flex items-center gap-2 aria-selected:bg-gray-100 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
+            className="flex items-center gap-2 aria-selected:bg-gray-200 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
           >
             <Grid2X2 className="h-4 w-4" />
             Grid
@@ -36,7 +36,7 @@ const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActi
         <TooltipTrigger asChild>
           <TabsTrigger 
             value="kanban" 
-            className="flex items-center gap-2 aria-selected:bg-gray-100 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
+            className="flex items-center gap-2 aria-selected:bg-gray-200 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
           >
             <Columns3 className="h-4 w-4" />
             Kanban
@@ -51,7 +51,7 @@ const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActi
         <TooltipTrigger asChild>
           <TabsTrigger 
             value="list" 
-            className="flex items-center gap-2 aria-selected:bg-gray-100 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
+            className="flex items-center gap-2 aria-selected:bg-gray-200 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
           >
             <List className="h-4 w-4" />
             List
