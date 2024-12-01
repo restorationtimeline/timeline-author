@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export const useProcessingTasks = (documentId: string) => {
   const queryClient = useQueryClient();
@@ -16,8 +17,25 @@ export const useProcessingTasks = (documentId: string) => {
           table: 'tasks',
           filter: `source_id=eq.${documentId}`
         },
-        () => {
+        (payload) => {
+          // Invalidate and refetch tasks when there's an update
           queryClient.invalidateQueries({ queryKey: ['tasks', documentId] });
+          
+          // Show toast notifications for task status changes
+          if (payload.new && payload.new.status !== payload.old?.status) {
+            const taskName = payload.new.task_name;
+            switch (payload.new.status) {
+              case 'in_progress':
+                toast.info(`Started: ${taskName}`);
+                break;
+              case 'completed':
+                toast.success(`Completed: ${taskName}`);
+                break;
+              case 'failed':
+                toast.error(`Failed: ${taskName}`);
+                break;
+            }
+          }
         }
       )
       .subscribe();
