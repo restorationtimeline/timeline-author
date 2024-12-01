@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { LogOut, Plus, Moon, Sun } from "lucide-react";
+import { LogOut, FilePlus, Moon, Sun, Link } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { useRef } from "react";
@@ -111,9 +111,9 @@ export const Header = () => {
   return (
     <header className="w-full h-16 md:h-10 bg-background border-b border-border/40 shadow-sm">
       <div className="container h-full flex items-center justify-between px-2 md:px-8">
-        <Link to="/" className="text-foreground font-semibold text-lg md:text-xl hover:text-foreground/90 transition-colors">
+        <RouterLink to="/" className="text-foreground font-semibold text-lg md:text-xl hover:text-foreground/90 transition-colors">
           Restoration Timeline
-        </Link>
+        </RouterLink>
         <div className="flex items-center gap-1 md:gap-4">
           <Tooltip>
             <TooltipTrigger asChild>
@@ -123,11 +123,30 @@ export const Header = () => {
                 onClick={handleFileUploadClick}
                 className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
               >
-                <Plus className="h-6 w-6 md:h-4 md:w-4" />
+                <FilePlus className="h-6 w-6 md:h-4 md:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
               <p className="text-sm">Upload Files</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  // Open command palette with focus on URL input
+                  // This functionality will be handled by the command palette component
+                }}
+                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
+              >
+                <Link className="h-6 w-6 md:h-4 md:w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-sm">Add Link</p>
             </TooltipContent>
           </Tooltip>
 
@@ -183,4 +202,3 @@ export const Header = () => {
     </header>
   );
 };
-
