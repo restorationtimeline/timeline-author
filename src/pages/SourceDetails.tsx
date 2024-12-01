@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
-import { DocumentMetadata } from "@/components/DocumentMetadata";
+import { DocumentMetadata } from "@/components/SourceMetadata";
 import { EditableTitle } from "@/components/EditableTitle";
 import { Header } from "@/components/Header";
 import { DeleteButton } from "@/components/source-details/DeleteButton";

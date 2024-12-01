@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-type Document = {
+type Source = {
   id: string;
   name: string;
   status: "pending" | "processing" | "completed" | "failed";
@@ -13,12 +13,12 @@ type Document = {
   uploaded_at: string;
 };
 
-export const DocumentGrid = () => {
+export const SourceGrid = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   
-  const { data: documents, isLoading } = useQuery({
-    queryKey: ["documents"],
+  const { data: sources, isLoading } = useQuery({
+    queryKey: ["sources"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sources")
@@ -27,13 +27,13 @@ export const DocumentGrid = () => {
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
-      return data as Document[];
+      return data as Source[];
     },
   });
 
   useEffect(() => {
     const channel = supabase
-      .channel('document_changes')
+      .channel('source_changes')
       .on(
         'postgres_changes',
         {
@@ -42,7 +42,7 @@ export const DocumentGrid = () => {
           table: 'sources'
         },
         (payload) => {
-          queryClient.invalidateQueries({ queryKey: ['documents'] });
+          queryClient.invalidateQueries({ queryKey: ['sources'] });
         }
       )
       .subscribe();
@@ -58,14 +58,14 @@ export const DocumentGrid = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
-      {documents?.map((doc) => (
+      {sources?.map((source) => (
         <Card 
-          key={doc.id} 
+          key={source.id} 
           className="p-4 bg-background dark:bg-gray-800 hover:shadow-md transition-shadow cursor-pointer border border-border/40"
-          onClick={() => navigate(`/sources/${doc.id}`)}
+          onClick={() => navigate(`/sources/${source.id}`)}
         >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-foreground break-words">{doc.name}</h3>
+            <h3 className="text-sm font-medium text-foreground break-words">{source.name}</h3>
           </div>
         </Card>
       ))}

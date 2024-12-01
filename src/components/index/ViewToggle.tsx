@@ -4,7 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 interface ViewToggleProps {
   activeView: string;
-  setActiveView: (view: string) => void;
+  setActiveView: (view: "grid" | "kanban") => void;
 }
 
 export const ViewToggle = ({ activeView, setActiveView }: ViewToggleProps) => (
@@ -14,6 +14,7 @@ export const ViewToggle = ({ activeView, setActiveView }: ViewToggleProps) => (
         <TooltipTrigger asChild>
           <TabsTrigger 
             value="grid" 
+            onClick={() => setActiveView("grid")}
             className="flex items-center gap-2 aria-selected:bg-gray-200 dark:aria-selected:bg-gray-700 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
           >
             <Grid2X2 className="h-4 w-4" />
@@ -28,7 +29,8 @@ export const ViewToggle = ({ activeView, setActiveView }: ViewToggleProps) => (
       <Tooltip>
         <TooltipTrigger asChild>
           <TabsTrigger 
-            value="kanban" 
+            value="kanban"
+            onClick={() => setActiveView("kanban")}
             className="flex items-center gap-2 aria-selected:bg-gray-200 dark:aria-selected:bg-gray-700 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
           >
             <Columns3 className="h-4 w-4" />
@@ -43,7 +45,8 @@ export const ViewToggle = ({ activeView, setActiveView }: ViewToggleProps) => (
       <Tooltip>
         <TooltipTrigger asChild>
           <TabsTrigger 
-            value="list" 
+            value="list"
+            onClick={() => setActiveView("list")}
             className="flex items-center gap-2 aria-selected:bg-gray-200 dark:aria-selected:bg-gray-700 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
           >
             <List className="h-4 w-4" />
