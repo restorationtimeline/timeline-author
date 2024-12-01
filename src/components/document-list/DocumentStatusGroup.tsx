@@ -49,7 +49,6 @@ export const DocumentStatusGroup = ({
             <TableHead>Name</TableHead>
             <TableHead>Type</TableHead>
             <TableHead>Upload Date</TableHead>
-            <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -63,12 +62,6 @@ export const DocumentStatusGroup = ({
               <TableCell>{getFriendlyMimeType(doc.type)}</TableCell>
               <TableCell>
                 {new Date(doc.uploaded_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <StatusIcon status={doc.status} />
-                  <span>{StatusLabel({ status: doc.status })}</span>
-                </div>
               </TableCell>
             </TableRow>
           ))}
