@@ -10,17 +10,16 @@ import { FileText, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
 import { SearchResults } from "./command-palette/SearchResults";
 import { FileUploadHandler } from "./command-palette/FileUploadHandler";
 import { isValidUrl, formatUrl } from "@/utils/urlUtils";
 import { Source } from "@/types/source";
+import { createNotification } from "@/utils/notifications";
 
 export const CommandPalette = () => {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ["sources", search],
@@ -42,11 +41,10 @@ export const CommandPalette = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast({
-          title: "Error",
-          description: "You must be logged in to add sources",
-          variant: "destructive",
-        });
+        await createNotification(
+          "Authentication Required",
+          "You must be logged in to add sources"
+        );
         return;
       }
 
@@ -66,7 +64,6 @@ export const CommandPalette = () => {
 
       if (error) throw error;
 
-      // Create initial task
       const { error: taskError } = await supabase
         .from('tasks')
         .insert({
@@ -81,33 +78,30 @@ export const CommandPalette = () => {
         console.error("Error creating task:", taskError);
       }
 
-      // Trigger crawl function
       const { error: crawlError } = await supabase.functions.invoke('crawl-website', {
         body: { url: formattedUrl }
       });
 
       if (crawlError) {
         console.error("Error triggering crawl:", crawlError);
-        toast({
-          title: "Warning",
-          description: "Document created but crawling failed to start. Please try again from the crawl queue.",
-          variant: "destructive",
-        });
+        await createNotification(
+          "Warning",
+          "Document created but crawling failed to start. Please try again from the crawl queue."
+        );
       } else {
-        toast({
-          title: "Success",
-          description: "Document created and crawling started.",
-        });
+        await createNotification(
+          "Success",
+          "Document created and crawling started."
+        );
       }
 
       setOpen(false);
       navigate("/crawl-queue");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create document. Please try again.",
-        variant: "destructive",
-      });
+      await createNotification(
+        "Error",
+        "Failed to create document. Please try again."
+      );
     }
   };
 

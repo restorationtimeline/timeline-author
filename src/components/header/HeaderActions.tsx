@@ -1,21 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { LogOut, FilePlus, Moon, Sun, Link as LinkIcon, List } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { List, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { useNavigate } from "react-router-dom";
 import { HeaderActionButton } from "./HeaderActionButton";
+import { NotificationsDropdown } from "./NotificationsDropdown";
 
-interface HeaderActionsProps {
-  onLogout: () => Promise<void>;
-  onFileUploadClick: () => void;
-  onLinkModalOpen: () => void;
-}
-
-export const HeaderActions = ({ 
-  onLogout, 
-  onFileUploadClick, 
-  onLinkModalOpen 
-}: HeaderActionsProps) => {
+export const HeaderActions = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
@@ -26,33 +15,15 @@ export const HeaderActions = ({
         onClick={() => navigate('/crawl-queue')}
         tooltip="Crawl Queue"
       />
-
+      <NotificationsDropdown />
       <HeaderActionButton
-        icon={<FilePlus className="h-6 w-6 md:h-4 md:w-4" />}
-        onClick={onFileUploadClick}
-        tooltip="Upload Files"
-      />
-
-      <HeaderActionButton
-        icon={<LinkIcon className="h-6 w-6 md:h-4 md:w-4" />}
-        onClick={onLinkModalOpen}
-        tooltip="Add Links"
-      />
-
-      <HeaderActionButton
-        icon={theme === "dark" ? (
+        icon={theme === 'dark' ? (
           <Sun className="h-6 w-6 md:h-4 md:w-4" />
         ) : (
           <Moon className="h-6 w-6 md:h-4 md:w-4" />
         )}
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         tooltip="Toggle theme"
-      />
-
-      <HeaderActionButton
-        icon={<LogOut className="h-6 w-6 md:h-4 md:w-4" />}
-        onClick={onLogout}
-        tooltip="Sign out"
       />
     </div>
   );
