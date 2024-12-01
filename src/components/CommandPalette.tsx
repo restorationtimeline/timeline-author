@@ -7,7 +7,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { FileText, Search, Plus, Upload } from "lucide-react";
+import { FileText, Plus, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,8 +24,9 @@ export const CommandPalette = () => {
 
   const isValidUrl = (urlString: string) => {
     try {
-      new URL(urlString);
-      return true;
+      const url = new URL(urlString);
+      // Ensure the URL has a valid protocol and no trailing colon
+      return url.protocol === 'http:' || url.protocol === 'https:';
     } catch {
       return false;
     }
@@ -49,12 +50,15 @@ export const CommandPalette = () => {
 
   const handleCreateDocument = async (url: string) => {
     try {
+      // Ensure URL is properly formatted
+      const formattedUrl = new URL(url).toString();
+      
       const { data, error } = await supabase
         .from("sources")
         .insert({
-          name: url,
+          name: formattedUrl,
           type: "url",
-          identifiers: { url, category: "webpage" },
+          identifiers: { url: formattedUrl, category: "webpage" },
           status: "pending",
         })
         .select()
