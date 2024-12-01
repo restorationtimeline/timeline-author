@@ -1,4 +1,4 @@
-import { Json } from "@/integrations/supabase/types";
+import { Json } from './database';
 
 export interface Source {
   id: string;
@@ -16,4 +16,5 @@ export interface Source {
   storage_path?: string;
   uploaded_at?: string;
   uploaded_by?: string;
+  metadata?: Json;
 }
