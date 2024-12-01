@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 
-export type Document = {
+export type Source = {
   id: string;
   name: string;
   status: "pending" | "processing" | "completed" | "failed";
@@ -10,11 +10,11 @@ export type Document = {
   uploaded_at: string;
 };
 
-export const useDocuments = () => {
+export const useSources = () => {
   const queryClient = useQueryClient();
   
-  const { data: documents, isLoading } = useQuery({
-    queryKey: ["documents"],
+  const { data: sources, isLoading } = useQuery({
+    queryKey: ["sources"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sources")
@@ -23,13 +23,13 @@ export const useDocuments = () => {
         .order("uploaded_at", { ascending: false });
 
       if (error) throw error;
-      return data as Document[];
+      return data as Source[];
     },
   });
 
   useEffect(() => {
     const channel = supabase
-      .channel('document_changes')
+      .channel('source_changes')
       .on(
         'postgres_changes',
         {
@@ -38,7 +38,7 @@ export const useDocuments = () => {
           table: 'sources'
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['documents'] });
+          queryClient.invalidateQueries({ queryKey: ['sources'] });
         }
       )
       .subscribe();
@@ -48,5 +48,5 @@ export const useDocuments = () => {
     };
   }, [queryClient]);
 
-  return { documents, isLoading };
+  return { sources, isLoading };
 };

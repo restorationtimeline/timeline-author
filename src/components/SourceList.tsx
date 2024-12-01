@@ -1,9 +1,9 @@
 import { Clock } from "lucide-react";
-import { DocumentStatusGroup } from "./document-list/DocumentStatusGroup";
-import { useDocuments } from "@/hooks/useDocuments";
+import { SourceStatusGroup } from "./source-list/SourceStatusGroup";
+import { useSources } from "@/hooks/useDocuments";
 
-export const DocumentList = () => {
-  const { documents, isLoading } = useDocuments();
+export const SourceList = () => {
+  const { sources, isLoading } = useSources();
 
   if (isLoading) {
     return (
@@ -13,23 +13,23 @@ export const DocumentList = () => {
     );
   }
 
-  const groupedDocuments = documents?.reduce((acc, doc) => {
-    if (!acc[doc.status]) {
-      acc[doc.status] = [];
+  const groupedSources = sources?.reduce((acc, source) => {
+    if (!acc[source.status]) {
+      acc[source.status] = [];
     }
-    acc[doc.status].push(doc);
+    acc[source.status].push(source);
     return acc;
-  }, {} as Record<string, typeof documents>);
+  }, {} as Record<string, typeof sources>);
 
   const statusOrder: ("processing" | "pending" | "completed" | "failed")[] = ["processing", "pending", "completed", "failed"];
 
   return (
     <div className="w-full space-y-8">
       {statusOrder.map((status) => (
-        <DocumentStatusGroup
+        <SourceStatusGroup
           key={status}
           status={status}
-          documents={groupedDocuments?.[status] || []}
+          sources={groupedSources?.[status] || []}
         />
       ))}
     </div>

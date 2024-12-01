@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { DocumentList } from "@/components/DocumentList";
-import { DocumentGrid } from "@/components/DocumentGrid";
+import { SourceList } from "@/components/DocumentList";
+import { SourceGrid } from "@/components/DocumentGrid";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { Header } from "@/components/Header";
 import { CommandPalette } from "@/components/CommandPalette";
@@ -45,10 +45,10 @@ const Index = () => {
               )}
               
               <TabsContent value="grid" className="w-full mt-0">
-                <DocumentGrid />
+                <SourceGrid />
               </TabsContent>
               <TabsContent value="list" className="w-full mt-0">
-                <DocumentList />
+                <SourceList />
               </TabsContent>
               <TabsContent value="kanban" className="w-full mt-0">
                 <KanbanBoard />
