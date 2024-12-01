@@ -20,7 +20,7 @@ export const HeaderActions = ({
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex items-center gap-1 md:gap-4">
+    <div className="flex items-center gap-0.5 md:gap-2">
       <HeaderActionButton
         icon={<List className="h-6 w-6 md:h-4 md:w-4" />}
         onClick={() => navigate('/crawl-queue')}
