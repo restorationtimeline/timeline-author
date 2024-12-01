@@ -10,16 +10,17 @@ import { FileText, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 import { SearchResults } from "./command-palette/SearchResults";
 import { FileUploadHandler } from "./command-palette/FileUploadHandler";
 import { isValidUrl, formatUrl } from "@/utils/urlUtils";
 import { Source } from "@/types/source";
-import { createNotification } from "@/utils/notifications";
 
 export const CommandPalette = () => {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ["sources", search],
@@ -37,14 +38,15 @@ export const CommandPalette = () => {
     enabled: !!search && isValidUrl(search),
   });
 
-  const handleCreateSource = async (url: string) => {
+  const handleCreateDocument = async (url: string) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        await createNotification(
-          "Authentication Required",
-          "You must be logged in to add sources"
-        );
+        toast({
+          title: "Error",
+          description: "You must be logged in to add sources",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -55,7 +57,7 @@ export const CommandPalette = () => {
         .insert({
           name: formattedUrl,
           type: "webpage",
-          identifiers: { url: formattedUrl },
+          identifiers: { url: formattedUrl, category: "webpage" },
           status: "pending",
           uploaded_by: session.user.id
         })
@@ -64,6 +66,7 @@ export const CommandPalette = () => {
 
       if (error) throw error;
 
+      // Create initial task
       const { error: taskError } = await supabase
         .from('tasks')
         .insert({
@@ -78,30 +81,33 @@ export const CommandPalette = () => {
         console.error("Error creating task:", taskError);
       }
 
+      // Trigger crawl function
       const { error: crawlError } = await supabase.functions.invoke('crawl-website', {
         body: { url: formattedUrl }
       });
 
       if (crawlError) {
         console.error("Error triggering crawl:", crawlError);
-        await createNotification(
-          "Warning",
-          "Source created but crawling failed to start. Please try again from the crawl queue."
-        );
+        toast({
+          title: "Warning",
+          description: "Document created but crawling failed to start. Please try again from the crawl queue.",
+          variant: "destructive",
+        });
       } else {
-        await createNotification(
-          "Success",
-          "Source created and crawling started."
-        );
+        toast({
+          title: "Success",
+          description: "Document created and crawling started.",
+        });
       }
 
       setOpen(false);
       navigate("/crawl-queue");
     } catch (error) {
-      await createNotification(
-        "Error",
-        "Failed to create source. Please try again."
-      );
+      toast({
+        title: "Error",
+        description: "Failed to create document. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -128,7 +134,7 @@ export const CommandPalette = () => {
           <CommandGroup heading="Actions">
             <CommandItem onSelect={() => setOpen(false)}>
               <Upload className="mr-2 h-4 w-4" />
-              <span>Upload Source</span>
+              <span>Upload Document</span>
             </CommandItem>
           </CommandGroup>
 
@@ -136,7 +142,7 @@ export const CommandPalette = () => {
             search={search}
             searchResults={searchResults}
             isValidUrl={isValidUrl(search)}
-            onCreateSource={handleCreateSource}
+            onCreateDocument={handleCreateDocument}
             onClose={() => setOpen(false)}
           />
 
@@ -148,7 +154,7 @@ export const CommandPalette = () => {
               }}
             >
               <FileText className="mr-2 h-4 w-4" />
-              <span>Sources</span>
+              <span>Documents</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>

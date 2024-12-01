@@ -1,5 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Link, Upload } from "lucide-react";
+import { LogOut, FilePlus, Moon, Sun, Link as LinkIcon, List } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTheme } from "@/hooks/use-theme";
+import { HeaderActionButton } from "./HeaderActionButton";
 
 interface HeaderActionsProps {
   onLogout: () => Promise<void>;
@@ -7,32 +11,49 @@ interface HeaderActionsProps {
   onLinkModalOpen: () => void;
 }
 
-export const HeaderActions = ({ onLogout, onFileUploadClick, onLinkModalOpen }: HeaderActionsProps) => {
+export const HeaderActions = ({ 
+  onLogout, 
+  onFileUploadClick, 
+  onLinkModalOpen 
+}: HeaderActionsProps) => {
+  const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+
   return (
-    <nav className="flex items-center gap-0.5 md:gap-2">
-      <Button
-        variant="ghost"
-        size="icon"
+    <div className="flex items-center gap-1 md:gap-4">
+      <HeaderActionButton
+        icon={<List className="h-6 w-6 md:h-4 md:w-4" />}
+        onClick={() => navigate('/crawl-queue')}
+        tooltip="Crawl Queue"
+      />
+
+      <HeaderActionButton
+        icon={<FilePlus className="h-6 w-6 md:h-4 md:w-4" />}
         onClick={onFileUploadClick}
-        className="h-8 w-8"
-      >
-        <Upload className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
+        tooltip="Upload Files"
+      />
+
+      <HeaderActionButton
+        icon={<LinkIcon className="h-6 w-6 md:h-4 md:w-4" />}
         onClick={onLinkModalOpen}
-        className="h-8 w-8"
-      >
-        <Link className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="ghost"
+        tooltip="Add Links"
+      />
+
+      <HeaderActionButton
+        icon={theme === "dark" ? (
+          <Sun className="h-6 w-6 md:h-4 md:w-4" />
+        ) : (
+          <Moon className="h-6 w-6 md:h-4 md:w-4" />
+        )}
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        tooltip="Toggle theme"
+      />
+
+      <HeaderActionButton
+        icon={<LogOut className="h-6 w-6 md:h-4 md:w-4" />}
         onClick={onLogout}
-        className="h-8 px-2 text-sm"
-      >
-        Logout
-      </Button>
-    </nav>
+        tooltip="Sign out"
+      />
+    </div>
   );
 };

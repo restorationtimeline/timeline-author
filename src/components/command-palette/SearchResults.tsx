@@ -7,7 +7,7 @@ interface SearchResultsProps {
   search: string;
   searchResults: Source[] | null;
   isValidUrl: boolean;
-  onCreateSource: (url: string) => void;
+  onCreateDocument: (url: string) => void;
   onClose: () => void;
 }
 
@@ -15,7 +15,7 @@ export const SearchResults = ({
   search,
   searchResults,
   isValidUrl,
-  onCreateSource,
+  onCreateDocument,
   onClose,
 }: SearchResultsProps) => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export const SearchResults = ({
       <CommandEmpty>
         {isValidUrl ? (
           <CommandGroup heading="Create New">
-            <CommandItem onSelect={() => onCreateSource(search)}>
+            <CommandItem onSelect={() => onCreateDocument(search)}>
               <Plus className="mr-2 h-4 w-4" />
               <span>Add "{search}"</span>
             </CommandItem>
@@ -36,17 +36,17 @@ export const SearchResults = ({
       </CommandEmpty>
       
       {searchResults && searchResults.length > 0 && (
-        <CommandGroup heading="Existing Sources">
-          {searchResults.map((source) => (
+        <CommandGroup heading="Existing Documents">
+          {searchResults.map((doc) => (
             <CommandItem
-              key={source.id}
+              key={doc.id}
               onSelect={() => {
-                navigate(`/sources/${source.id}`);
+                navigate(`/sources/${doc.id}`);
                 onClose();
               }}
             >
               <FileText className="mr-2 h-4 w-4" />
-              <span>{source.name}</span>
+              <span>{doc.name}</span>
             </CommandItem>
           ))}
         </CommandGroup>
