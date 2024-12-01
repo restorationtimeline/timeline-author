@@ -1,8 +1,6 @@
-import { CheckCircle2, Circle, CirclePlay } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useProcessingTasks } from "./processing-checklist/useProcessingTasks";
+import { useStepExecution } from "./processing-checklist/useStepExecution";
+import { ProcessingStep } from "./processing-checklist/ProcessingStep";
 
 export const processingSteps = [
   "Categorize the Source",
@@ -21,74 +19,13 @@ interface ProcessingChecklistProps {
 }
 
 export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistProps) => {
-  const { data: tasks, isLoading } = useQuery({
-    queryKey: ['tasks', documentId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*')
-        .eq('source_id', documentId)
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      return data || [];
-    }
-  });
+  const { data: tasks, isLoading } = useProcessingTasks(documentId);
+  const { handleRunStep } = useStepExecution(documentId);
 
   const getStepStatus = (stepIndex: number) => {
     if (!tasks) return 'pending';
     const task = tasks.find(t => t.task_name === processingSteps[stepIndex]);
     return task?.status || 'pending';
-  };
-
-  const handleRunNextStep = async (stepIndex: number) => {
-    try {
-      const stepName = processingSteps[stepIndex];
-      const loadingToast = toast.loading(`Starting ${stepName}...`);
-      
-      // Create the task if it doesn't exist
-      const { error: taskError } = await supabase
-        .from('tasks')
-        .insert({
-          source_id: documentId,
-          task_name: stepName,
-          status: 'pending'
-        })
-        .select()
-        .single();
-
-      if (taskError && !taskError.message.includes('duplicate')) {
-        throw taskError;
-      }
-
-      // If it's the categorization step, call the edge function
-      if (stepName === "Categorize the Source") {
-        const { data, error } = await supabase.functions.invoke('categorize-source', {
-          body: { sourceId: documentId }
-        });
-
-        if (error) throw error;
-        
-        toast.dismiss(loadingToast);
-        toast.success(`${stepName} completed successfully`);
-        return;
-      }
-
-      // For other steps, just update the task status (placeholder)
-      const { error } = await supabase
-        .from('tasks')
-        .update({ status: 'completed', completed_at: new Date().toISOString() })
-        .eq('source_id', documentId)
-        .eq('task_name', stepName);
-
-      if (error) throw error;
-
-      toast.dismiss(loadingToast);
-      toast.success(`${stepName} completed`);
-    } catch (error) {
-      console.error('Error starting task:', error);
-      toast.error("Failed to start processing");
-    }
   };
 
   if (isLoading) {
@@ -114,25 +51,14 @@ export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistP
           (index === 0 || getStepStatus(index - 1) === 'completed');
 
         return (
-          <div key={step} className="flex items-center space-x-3">
-            {isNext ? (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-5 w-5 p-0"
-                onClick={() => handleRunNextStep(index)}
-              >
-                <CirclePlay className="h-5 w-5 text-blue-500" />
-              </Button>
-            ) : isCompleted ? (
-              <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-            ) : (
-              <Circle className="h-5 w-5 text-gray-400 flex-shrink-0" />
-            )}
-            <span className={isCompleted ? "text-foreground" : "text-muted-foreground"}>
-              {step}
-            </span>
-          </div>
+          <ProcessingStep
+            key={step}
+            step={step}
+            status={stepStatus}
+            isNext={isNext}
+            isCompleted={isCompleted}
+            onRunStep={() => handleRunStep(step)}
+          />
         );
       })}
     </div>
