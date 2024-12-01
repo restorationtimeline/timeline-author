@@ -28,6 +28,13 @@ export const LinkInputModal = ({ open, onOpenChange }: LinkInputModalProps) => {
     setIsSubmitting(true);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("You must be logged in to add links");
+        return;
+      }
+
       for (const url of linkList) {
         try {
           new URL(url); // Validate URL format
@@ -43,12 +50,17 @@ export const LinkInputModal = ({ open, onOpenChange }: LinkInputModalProps) => {
             type: "url",
             identifiers: { url },
             status: "pending",
+            uploaded_by: session.user.id
           });
 
-        if (error) throw error;
+        if (error) {
+          console.error("Error adding link:", error);
+          toast.error(`Failed to add link: ${url}`);
+        } else {
+          toast.success(`Added link: ${url}`);
+        }
       }
 
-      toast.success("Links added successfully");
       setLinks("");
       onOpenChange(false);
     } catch (error) {
