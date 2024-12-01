@@ -54,13 +54,28 @@ export const CommandPalette = () => {
         .insert({
           name: url,
           type: "url",
-          identifiers: { url },
+          identifiers: { url, category: "webpage" },
           status: "pending",
         })
         .select()
         .single();
 
       if (error) throw error;
+
+      // Create a completed task for categorization
+      const { error: taskError } = await supabase
+        .from('tasks')
+        .insert({
+          source_id: data.id,
+          task_name: 'Categorize the Source',
+          status: 'completed',
+          started_at: new Date().toISOString(),
+          completed_at: new Date().toISOString()
+        });
+
+      if (taskError) {
+        console.error("Error creating task:", taskError);
+      }
 
       toast({
         title: "Document created",
