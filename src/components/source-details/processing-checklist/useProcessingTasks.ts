@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { Database } from "@/integrations/supabase/types";
 
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
+type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
+
 type RealtimePayload = {
   new: Task;
   old: Task;
@@ -32,7 +34,7 @@ export const useProcessingTasks = (documentId: string) => {
           // Show toast notifications for task status changes
           if (payload.new && payload.old && payload.new.status !== payload.old.status) {
             const taskName = payload.new.task_name;
-            switch (payload.new.status) {
+            switch (payload.new.status as TaskStatus) {
               case 'in_progress':
                 toast.info(`Started: ${taskName}`);
                 break;

@@ -43,7 +43,7 @@ export const ProcessingStep = ({
             Run
           </Button>
         )}
-        {status === 'completed' || status === 'failed' ? (
+        {(status === 'completed' || status === 'failed') && (
           <Button
             variant="outline"
             size="sm"
@@ -53,7 +53,7 @@ export const ProcessingStep = ({
             <RotateCcw className="h-4 w-4 mr-2" />
             Reset
           </Button>
-        ) : null}
+        )}
       </div>
     </div>
   );
