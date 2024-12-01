@@ -9,7 +9,8 @@ import { Header } from "@/components/Header";
 import { DeleteButton } from "@/components/source-details/DeleteButton";
 import { ErrorLogs } from "@/components/source-details/ErrorLogs";
 import { IdentifiersForm } from "@/components/source-details/IdentifiersForm";
-import { ProcessingChecklist, processingSteps } from "@/components/source-details/ProcessingChecklist";
+import { MetadataForm } from "@/components/source-details/MetadataForm";
+import { ProcessingChecklist } from "@/components/source-details/ProcessingChecklist";
 import { toast } from "sonner";
 
 const SourceDetails = () => {
@@ -143,6 +144,11 @@ const SourceDetails = () => {
             <IdentifiersForm 
               documentId={documentData.id} 
               initialIdentifiers={documentData.identifiers} 
+            />
+
+            <MetadataForm 
+              documentId={documentData.id} 
+              initialMetadata={documentData.metadata} 
             />
 
             <div className="mt-6 space-y-4">
