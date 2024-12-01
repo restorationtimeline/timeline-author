@@ -14,13 +14,15 @@ import { STORAGE_KEYS } from "@/constants/storage";
 import { FileUploadHandler } from "@/components/file-upload/FileUploadHandler";
 import { ViewShortcuts } from "@/components/keyboard-shortcuts/ViewShortcuts";
 
-// ViewToggle component remains in the same file as it's tightly coupled with the Index page
 const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActiveView: (view: string) => void }) => (
   <TabsList className="bg-white dark:bg-gray-800 border">
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <TabsTrigger value="grid" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium">
+          <TabsTrigger 
+            value="grid" 
+            className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-medium data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground transition-colors"
+          >
             <Grid2X2 className="h-4 w-4" />
             Grid
           </TabsTrigger>
@@ -32,7 +34,10 @@ const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActi
       
       <Tooltip>
         <TooltipTrigger asChild>
-          <TabsTrigger value="kanban" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium">
+          <TabsTrigger 
+            value="kanban" 
+            className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-medium data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground transition-colors"
+          >
             <Columns3 className="h-4 w-4" />
             Kanban
           </TabsTrigger>
@@ -44,7 +49,10 @@ const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActi
       
       <Tooltip>
         <TooltipTrigger asChild>
-          <TabsTrigger value="list" className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-[#0EA5E9] data-[state=active]:font-medium">
+          <TabsTrigger 
+            value="list" 
+            className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-medium data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground transition-colors"
+          >
             <List className="h-4 w-4" />
             List
           </TabsTrigger>
