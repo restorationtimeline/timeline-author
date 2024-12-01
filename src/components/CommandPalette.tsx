@@ -40,6 +40,16 @@ export const CommandPalette = () => {
 
   const handleCreateDocument = async (url: string) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to add sources",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const formattedUrl = formatUrl(url);
       
       const { data, error } = await supabase
@@ -49,6 +59,7 @@ export const CommandPalette = () => {
           type: "url",
           identifiers: { url: formattedUrl, category: "webpage" },
           status: "pending",
+          uploaded_by: session.user.id
         })
         .select()
         .single();
