@@ -28,6 +28,12 @@ export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistP
     return task?.status || 'pending';
   };
 
+  const isStepEnabled = (stepIndex: number) => {
+    if (stepIndex === 0) return true;
+    const previousStepStatus = getStepStatus(stepIndex - 1);
+    return previousStepStatus === 'completed';
+  };
+
   if (isLoading) {
     return (
       <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-3">
@@ -47,8 +53,7 @@ export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistP
       {processingSteps.map((step, index) => {
         const stepStatus = getStepStatus(index);
         const isCompleted = stepStatus === 'completed';
-        const isNext = stepStatus === 'pending' && 
-          (index === 0 || getStepStatus(index - 1) === 'completed');
+        const isNext = !isCompleted && isStepEnabled(index);
 
         return (
           <ProcessingStep
