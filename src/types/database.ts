@@ -1,3 +1,7 @@
+import { CrawlQueueTable, EntitiesTable, EventsTable, ProfilesTable, SourcesTable, TasksTable } from './tables';
+import { DatabaseFunctions } from './functions';
+import { DatabaseEnums } from './enums';
+
 export type Json =
   | string
   | number
