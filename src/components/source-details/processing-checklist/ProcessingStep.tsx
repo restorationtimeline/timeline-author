@@ -41,7 +41,7 @@ export const ProcessingStep = ({
             Run
           </Button>
         )}
-        {(status === 'completed' || status === 'failed') && (
+        {(['completed', 'failed'] as const).includes(status) && (
           <Button
             variant="outline"
             size="sm"
