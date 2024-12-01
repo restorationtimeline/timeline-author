@@ -1,11 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Clock } from "lucide-react";
-import { StatusIcon } from "./document-list/StatusIcon";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { getFriendlyMimeType } from "@/utils/mimeTypes";
+import { DocumentStatusGroup } from "./document-list/DocumentStatusGroup";
 
 type Document = {
   id: string;
@@ -15,21 +12,7 @@ type Document = {
   uploaded_at: string;
 };
 
-const StatusLabel = ({ status }: { status: Document["status"] }) => {
-  switch (status) {
-    case "processing":
-      return "Processing";
-    case "completed":
-      return "Completed";
-    case "failed":
-      return "Failed";
-    default:
-      return "Pending";
-  }
-};
-
 export const DocumentList = () => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   
   const { data: documents, isLoading } = useQuery({
@@ -87,52 +70,13 @@ export const DocumentList = () => {
 
   return (
     <div className="w-full space-y-8">
-      {statusOrder.map((status) => {
-        const docs = groupedDocuments?.[status] || [];
-        if (docs.length === 0) return null;
-
-        return (
-          <div key={status} className="space-y-4">
-            <div className="flex items-center gap-2">
-              <StatusIcon status={status} />
-              <h2 className="text-sm font-medium text-foreground break-words">
-                {StatusLabel({ status })} ({docs.length})
-              </h2>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Upload Date</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {docs.map((doc) => (
-                  <TableRow
-                    key={doc.id}
-                    className="cursor-pointer hover:bg-accent/50"
-                    onClick={() => navigate(`/sources/${doc.id}`)}
-                  >
-                    <TableCell className="font-medium">{doc.name}</TableCell>
-                    <TableCell>{getFriendlyMimeType(doc.type)}</TableCell>
-                    <TableCell>
-                      {new Date(doc.uploaded_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <StatusIcon status={doc.status} />
-                        <span>{StatusLabel({ status: doc.status })}</span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        );
-      })}
+      {statusOrder.map((status) => (
+        <DocumentStatusGroup
+          key={status}
+          status={status}
+          documents={groupedDocuments?.[status] || []}
+        />
+      ))}
     </div>
   );
 };

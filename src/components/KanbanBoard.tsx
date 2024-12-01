@@ -1,11 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "./ui/card";
-import { Clock, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
+import { Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "./ui/button";
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { KanbanColumn } from "./kanban/KanbanColumn";
 
 type Document = {
   id: string;
@@ -35,27 +33,11 @@ const columns = [
     id: "failed",
     title: "Failed",
     icon: <AlertCircle className="h-4 w-4 text-red-500" />,
-    action: (failedCount: number) => (
-      <div className="flex gap-2 px-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors border border-gray-200 dark:border-gray-700"
-          disabled={failedCount === 0}
-          onClick={() => {
-            toast.info("Retrying failed documents...");
-          }}
-          aria-label="Retry failed documents"
-        >
-          <RefreshCw className={`h-3 w-3 ${failedCount === 0 ? 'text-gray-300 dark:text-gray-600' : 'text-blue-500'}`} />
-        </Button>
-      </div>
-    ),
+    showRetryButton: true,
   },
 ];
 
 export const KanbanBoard = () => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   
   const { data: documents, isLoading } = useQuery({
@@ -105,35 +87,22 @@ export const KanbanBoard = () => {
     return <div className="text-foreground">Loading...</div>;
   }
 
-  const failedDocumentsCount = documents?.filter(doc => doc.status === "failed").length || 0;
+  const groupedDocuments = documents?.reduce((acc, doc) => {
+    if (!acc[doc.status]) {
+      acc[doc.status] = [];
+    }
+    acc[doc.status].push(doc);
+    return acc;
+  }, {} as Record<Document["status"], Document[]>);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {columns.map((column) => (
-        <div key={column.id} className="flex flex-col bg-white dark:bg-gray-800 p-3 rounded-lg min-h-[300px] md:min-h-[600px] shadow-sm border border-border/40">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-1.5">
-              {column.icon}
-              <h3 className="text-sm font-medium text-foreground break-words">{column.title}</h3>
-            </div>
-            {column.action && column.action(failedDocumentsCount)}
-          </div>
-          <div className="flex-1 overflow-auto">
-            {documents
-              ?.filter((doc) => doc.status === column.id)
-              .map((doc) => (
-                <Card
-                  key={doc.id}
-                  className="p-2 mb-2 hover:shadow-md transition-shadow cursor-pointer bg-background dark:bg-gray-700/50"
-                  onClick={() => navigate(`/sources/${doc.id}`)}
-                >
-                  <div>
-                    <h4 className="text-sm font-medium text-foreground break-words">{doc.name}</h4>
-                  </div>
-                </Card>
-              ))}
-          </div>
-        </div>
+        <KanbanColumn
+          key={column.id}
+          {...column}
+          documents={groupedDocuments?.[column.id as Document["status"]] || []}
+        />
       ))}
     </div>
   );
