@@ -2,6 +2,18 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+
+type Task = {
+  id: string;
+  source_id: string;
+  task_name: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: string | null;
+  last_updated: string | null;
+};
 
 export const useProcessingTasks = (documentId: string) => {
   const queryClient = useQueryClient();
@@ -17,7 +29,7 @@ export const useProcessingTasks = (documentId: string) => {
           table: 'tasks',
           filter: `source_id=eq.${documentId}`
         },
-        (payload) => {
+        (payload: RealtimePostgresChangesPayload<Task>) => {
           // Invalidate and refetch tasks when there's an update
           queryClient.invalidateQueries({ queryKey: ['tasks', documentId] });
           
