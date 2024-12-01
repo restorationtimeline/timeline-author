@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { DocumentList } from "@/components/DocumentList";
 import { DocumentGrid } from "@/components/DocumentGrid";
 import { KanbanBoard } from "@/components/KanbanBoard";
@@ -6,12 +6,12 @@ import { Header } from "@/components/Header";
 import { CommandPalette } from "@/components/CommandPalette";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Grid2X2, List, Columns3 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { UploadQueue } from "@/components/UploadQueue";
 import { useUploadQueueStore } from "@/stores/uploadQueueStore";
-import { STORAGE_KEYS } from "@/constants/storage";
 
 // Extract ViewToggle component to reduce file size
 const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActiveView: (view: string) => void }) => (
@@ -58,14 +58,14 @@ const ViewToggle = ({ activeView, setActiveView }: { activeView: string, setActi
 
 const Index = () => {
   const [activeView, setActiveView] = useState(() => {
-    return localStorage.getItem(STORAGE_KEYS.PREFERRED_VIEW) || "grid";
+    return localStorage.getItem(STORAGE_KEY) || "grid";
   });
   const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
   const uploadQueue = useUploadQueueStore(state => state.items);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.PREFERRED_VIEW, activeView);
+    localStorage.setItem(STORAGE_KEY, activeView);
   }, [activeView]);
 
   useEffect(() => {
