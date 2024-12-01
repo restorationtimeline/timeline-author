@@ -1,9 +1,11 @@
 import { Check, Loader2, PlayCircle, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
+
 interface ProcessingStepProps {
   step: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  status: TaskStatus;
   isNext: boolean;
   isCompleted: boolean;
   onRunStep: () => void;
