@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { SourceList } from "@/components/DocumentList";
-import { SourceGrid } from "@/components/DocumentGrid";
+import { SourceList } from "@/components/SourceList";
+import { SourceGrid } from "@/components/SourceGrid";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { Header } from "@/components/Header";
 import { CommandPalette } from "@/components/CommandPalette";

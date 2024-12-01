@@ -1,6 +1,6 @@
 import { Clock } from "lucide-react";
 import { SourceStatusGroup } from "./source-list/SourceStatusGroup";
-import { useSources } from "@/hooks/useDocuments";
+import { useSources } from "@/hooks/useSources";
 
 export const SourceList = () => {
   const { sources, isLoading } = useSources();

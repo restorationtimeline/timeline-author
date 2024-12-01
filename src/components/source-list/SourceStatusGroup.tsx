@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { useNavigate } from "react-router-dom";
 import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
-type Document = {
+type Source = {
   id: string;
   name: string;
   status: "pending" | "processing" | "completed" | "failed";
@@ -11,7 +11,7 @@ type Document = {
   uploaded_at: string;
 };
 
-const StatusLabel = ({ status }: { status: Document["status"] }) => {
+const StatusLabel = ({ status }: { status: Source["status"] }) => {
   switch (status) {
     case "processing":
       return "Processing";
@@ -24,23 +24,23 @@ const StatusLabel = ({ status }: { status: Document["status"] }) => {
   }
 };
 
-export const DocumentStatusGroup = ({ 
+export const SourceStatusGroup = ({ 
   status, 
-  documents 
+  sources 
 }: { 
-  status: Document["status"];
-  documents: Document[];
+  status: Source["status"];
+  sources: Source[];
 }) => {
   const navigate = useNavigate();
 
-  if (documents.length === 0) return null;
+  if (sources.length === 0) return null;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <StatusIcon status={status} />
         <h2 className="text-sm font-medium text-foreground break-words">
-          {StatusLabel({ status })} ({documents.length})
+          {StatusLabel({ status })} ({sources.length})
         </h2>
       </div>
       <Table>
@@ -52,16 +52,16 @@ export const DocumentStatusGroup = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {documents.map((doc) => (
+          {sources.map((source) => (
             <TableRow
-              key={doc.id}
+              key={source.id}
               className="cursor-pointer hover:bg-accent/50"
-              onClick={() => navigate(`/sources/${doc.id}`)}
+              onClick={() => navigate(`/sources/${source.id}`)}
             >
-              <TableCell className="font-medium">{doc.name}</TableCell>
-              <TableCell>{getFriendlyMimeType(doc.type)}</TableCell>
+              <TableCell className="font-medium">{source.name}</TableCell>
+              <TableCell>{getFriendlyMimeType(source.type)}</TableCell>
               <TableCell>
-                {new Date(doc.uploaded_at).toLocaleDateString()}
+                {new Date(source.uploaded_at).toLocaleDateString()}
               </TableCell>
             </TableRow>
           ))}
