@@ -43,7 +43,7 @@ export const LinkInputModal = ({ open, onOpenChange }: LinkInputModalProps) => {
           continue;
         }
 
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("sources")
           .insert({
             name: url,
@@ -51,17 +51,19 @@ export const LinkInputModal = ({ open, onOpenChange }: LinkInputModalProps) => {
             identifiers: { url, category: "webpage" },
             status: "pending",
             uploaded_by: session.user.id
-          });
+          })
+          .select()
+          .single();
 
         if (error) {
           console.error("Error adding link:", error);
           toast.error(`Failed to add link: ${url}`);
-        } else {
+        } else if (data) {
           // Create a completed task for categorization
           const { error: taskError } = await supabase
             .from('tasks')
             .insert({
-              source_id: error?.id,
+              source_id: data.id,
               task_name: 'Categorize the Source',
               status: 'completed',
               started_at: new Date().toISOString(),
