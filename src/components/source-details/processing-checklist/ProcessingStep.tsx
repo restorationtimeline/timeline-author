@@ -1,7 +1,9 @@
 import React from 'react';
 import { Check, Clock, AlertCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { TaskStatus } from '@/integrations/supabase/types';
+import { Database } from '@/integrations/supabase/types';
+
+type TaskStatus = Database['public']['Enums']['task_status_enum'];
 
 interface ProcessingStepProps {
   name: string;

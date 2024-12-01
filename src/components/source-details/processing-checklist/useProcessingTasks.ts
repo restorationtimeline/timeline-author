@@ -1,7 +1,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
-import { TaskStatus } from '@/integrations/supabase/types';
+import { Database } from '@/integrations/supabase/types';
+
+type TaskStatus = Database['public']['Enums']['task_status_enum'];
 
 interface Task {
   id: string;
