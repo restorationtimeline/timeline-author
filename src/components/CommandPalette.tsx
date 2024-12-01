@@ -1,36 +1,25 @@
 import React from "react";
 import {
   CommandDialog,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { FileText, Plus, Upload } from "lucide-react";
+import { FileText, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useUploadQueueStore } from "@/stores/uploadQueueStore";
+import { SearchResults } from "./command-palette/SearchResults";
+import { FileUploadHandler } from "./command-palette/FileUploadHandler";
+import { isValidUrl, formatUrl } from "@/utils/urlUtils";
 
 export const CommandPalette = () => {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const { addItem, updateItem, clearCompleted } = useUploadQueueStore();
-
-  const isValidUrl = (urlString: string) => {
-    try {
-      const url = new URL(urlString);
-      // Ensure the URL has a valid protocol and no trailing colon
-      return url.protocol === 'http:' || url.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  };
 
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ["sources", search],
@@ -50,8 +39,7 @@ export const CommandPalette = () => {
 
   const handleCreateDocument = async (url: string) => {
     try {
-      // Ensure URL is properly formatted
-      const formattedUrl = new URL(url).toString();
+      const formattedUrl = formatUrl(url);
       
       const { data, error } = await supabase
         .from("sources")
@@ -66,7 +54,6 @@ export const CommandPalette = () => {
 
       if (error) throw error;
 
-      // Create a completed task for categorization
       const { error: taskError } = await supabase
         .from('tasks')
         .insert({
@@ -97,89 +84,6 @@ export const CommandPalette = () => {
     }
   };
 
-  const handleFileUpload = async (files: FileList) => {
-    const fileArray = Array.from(files);
-    if (fileArray.length === 0) return;
-
-    for (const file of files) {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          toast({
-            title: "Error",
-            description: "You must be logged in to upload files",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        addItem({
-          file,
-          progress: 0,
-          status: 'waiting'
-        });
-
-        updateItem(file, { status: 'uploading' });
-
-        const fileExt = file.name.split('.').pop();
-        const documentId = crypto.randomUUID();
-        const fileName = `${documentId}.${fileExt}`;
-        const filePath = `${documentId}/${fileName}`; 
-        
-        const { data: storageData, error: uploadError } = await supabase.storage
-          .from('sources')  // Changed from 'documents' to 'sources'
-          .upload(filePath, file, {
-            contentType: file.type,
-            upsert: false
-          });
-
-        if (uploadError) throw uploadError;
-
-        const baseName = file.name.split('.')[0];
-        
-        const { error: dbError } = await supabase
-          .from('sources')
-          .insert({
-            name: baseName,
-            type: file.type,
-            status: 'pending',
-            uploaded_by: session.user.id,
-            storage_path: filePath
-          });
-
-        if (dbError) throw dbError;
-
-        updateItem(file, { progress: 100, status: 'completed' });
-        
-        toast({
-          title: "Success",
-          description: `Uploaded ${file.name}`,
-        });
-
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        updateItem(file, { status: 'error' });
-        
-        toast({
-          title: "Error",
-          description: `Failed to upload ${file.name}`,
-          variant: "destructive",
-        });
-      }
-    }
-
-    setTimeout(() => {
-      clearCompleted();
-    }, 3000);
-  };
-
-  const handleUploadClick = () => {
-    setOpen(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === " ") {
@@ -201,43 +105,19 @@ export const CommandPalette = () => {
         />
         <CommandList>
           <CommandGroup heading="Actions">
-            <CommandItem onSelect={handleUploadClick}>
+            <CommandItem onSelect={() => setOpen(false)}>
               <Upload className="mr-2 h-4 w-4" />
               <span>Upload Document</span>
             </CommandItem>
           </CommandGroup>
 
-          <CommandEmpty>
-            {isValidUrl(search) ? (
-              <CommandGroup heading="Create New">
-                <CommandItem
-                  onSelect={() => handleCreateDocument(search)}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  <span>Add "{search}"</span>
-                </CommandItem>
-              </CommandGroup>
-            ) : (
-              "No results found."
-            )}
-          </CommandEmpty>
-          
-          {searchResults && searchResults.length > 0 && (
-            <CommandGroup heading="Existing Documents">
-              {searchResults.map((doc) => (
-                <CommandItem
-                  key={doc.id}
-                  onSelect={() => {
-                    navigate(`/sources/${doc.id}`);
-                    setOpen(false);
-                  }}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>{doc.name}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
+          <SearchResults
+            search={search}
+            searchResults={searchResults}
+            isValidUrl={isValidUrl(search)}
+            onCreateDocument={handleCreateDocument}
+            onClose={() => setOpen(false)}
+          />
 
           <CommandGroup heading="Navigation">
             <CommandItem
@@ -252,17 +132,7 @@ export const CommandPalette = () => {
           </CommandGroup>
         </CommandList>
       </CommandDialog>
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        onChange={(e) => {
-          if (e.target.files) {
-            handleFileUpload(e.target.files);
-          }
-        }}
-        multiple
-      />
+      <FileUploadHandler onClose={() => setOpen(false)} />
     </>
   );
 };
