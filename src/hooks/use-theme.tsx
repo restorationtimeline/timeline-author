@@ -51,16 +51,13 @@ export function ThemeProvider({
     root.classList.add(theme)
   }, [theme])
 
-  const value = React.useMemo(
-    () => ({
-      theme,
-      setTheme: (theme: Theme) => {
-        localStorage.setItem(storageKey, theme)
-        setTheme(theme)
-      },
-    }),
-    [theme, storageKey]
-  )
+  const value = {
+    theme,
+    setTheme: (theme: Theme) => {
+      localStorage.setItem(storageKey, theme)
+      setTheme(theme)
+    },
+  }
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>

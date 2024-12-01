@@ -17,7 +17,7 @@ const SourceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: documentData, isLoading, error } = useQuery({
+  const { data: source, isLoading, error } = useQuery({
     queryKey: ["source", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -36,7 +36,7 @@ const SourceDetails = () => {
   });
 
   const handleDownload = async () => {
-    if (!documentData?.storage_path) {
+    if (!source?.storage_path) {
       toast.error("No file path found");
       return;
     }
@@ -44,7 +44,7 @@ const SourceDetails = () => {
     try {
       const { data, error } = await supabase.storage
         .from('documents')
-        .download(documentData.storage_path);
+        .download(source.storage_path);
 
       if (error) {
         console.error("Download error:", error);
@@ -54,7 +54,7 @@ const SourceDetails = () => {
       const url = URL.createObjectURL(data);
       const a = document.createElement('a');
       a.href = url;
-      a.download = documentData.name;
+      a.download = source.name;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -87,14 +87,14 @@ const SourceDetails = () => {
         <Header />
         <div className="container mx-auto px-4 md:px-8 py-0 md:py-12 max-w-2xl">
           <h1 className="text-2xl font-bold mb-4 text-red-500">Error loading source</h1>
-          <p className="text-gray-600 mb-4">There was an error loading the document details.</p>
+          <p className="text-gray-600 mb-4">There was an error loading the source details.</p>
           <Button onClick={() => navigate(-1)}>Go Back</Button>
         </div>
       </div>
     );
   }
 
-  if (!documentData) {
+  if (!source) {
     return (
       <div>
         <Header />
@@ -122,7 +122,7 @@ const SourceDetails = () => {
 
           <div className="space-y-6">
             <EditableTitle
-              initialValue={documentData.name}
+              initialValue={source.name}
               onSave={async (newName) => {
                 const { error } = await supabase
                   .from("sources")
@@ -133,26 +133,26 @@ const SourceDetails = () => {
               }}
             />
 
-            <SourceMetadata document={documentData} />
-            <ErrorLogs errors={documentData.error_logs || []} />
+            <SourceMetadata source={source} />
+            <ErrorLogs errors={source.error_logs || []} />
             
             <ProcessingChecklist 
-              status={documentData.status} 
-              documentId={documentData.id} 
+              status={source.status} 
+              documentId={source.id} 
             />
             
             <IdentifiersForm 
-              documentId={documentData.id} 
-              initialIdentifiers={documentData.identifiers} 
+              documentId={source.id} 
+              initialIdentifiers={source.identifiers} 
             />
 
             <MetadataForm 
-              documentId={documentData.id} 
-              initialMetadata={documentData.metadata} 
+              documentId={source.id} 
+              initialMetadata={source.metadata} 
             />
 
             <div className="mt-6 space-y-4">
-              {documentData.storage_path && (
+              {source.storage_path && (
                 <Button 
                   size="lg" 
                   className="w-full h-16 bg-green-600 hover:bg-green-700 select-none"
@@ -162,7 +162,7 @@ const SourceDetails = () => {
                   Download File
                 </Button>
               )}
-              <DeleteButton documentId={documentData.id} />
+              <DeleteButton documentId={source.id} />
             </div>
           </div>
         </div>
