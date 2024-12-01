@@ -1,30 +1,38 @@
-import { List, Moon, Sun } from "lucide-react";
-import { useTheme } from "@/hooks/use-theme";
-import { useNavigate } from "react-router-dom";
-import { HeaderActionButton } from "./HeaderActionButton";
-import { NotificationsDropdown } from "./NotificationsDropdown";
+import { Button } from "@/components/ui/button";
+import { Link, Upload } from "lucide-react";
 
-export const HeaderActions = () => {
-  const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
+interface HeaderActionsProps {
+  onLogout: () => Promise<void>;
+  onFileUploadClick: () => void;
+  onLinkModalOpen: () => void;
+}
 
+export const HeaderActions = ({ onLogout, onFileUploadClick, onLinkModalOpen }: HeaderActionsProps) => {
   return (
-    <div className="flex items-center gap-0.5 md:gap-2">
-      <HeaderActionButton
-        icon={<List className="h-6 w-6 md:h-4 md:w-4" />}
-        onClick={() => navigate('/crawl-queue')}
-        tooltip="Crawl Queue"
-      />
-      <NotificationsDropdown />
-      <HeaderActionButton
-        icon={theme === 'dark' ? (
-          <Sun className="h-6 w-6 md:h-4 md:w-4" />
-        ) : (
-          <Moon className="h-6 w-6 md:h-4 md:w-4" />
-        )}
-        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        tooltip="Toggle theme"
-      />
-    </div>
+    <nav className="flex items-center gap-0.5 md:gap-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={onFileUploadClick}
+        className="h-8 w-8"
+      >
+        <Upload className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={onLinkModalOpen}
+        className="h-8 w-8"
+      >
+        <Link className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        onClick={onLogout}
+        className="h-8 px-2 text-sm"
+      >
+        Logout
+      </Button>
+    </nav>
   );
 };

@@ -37,7 +37,7 @@ export const CommandPalette = () => {
     enabled: !!search && isValidUrl(search),
   });
 
-  const handleCreateDocument = async (url: string) => {
+  const handleCreateSource = async (url: string) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -86,12 +86,12 @@ export const CommandPalette = () => {
         console.error("Error triggering crawl:", crawlError);
         await createNotification(
           "Warning",
-          "Document created but crawling failed to start. Please try again from the crawl queue."
+          "Source created but crawling failed to start. Please try again from the crawl queue."
         );
       } else {
         await createNotification(
           "Success",
-          "Document created and crawling started."
+          "Source created and crawling started."
         );
       }
 
@@ -100,7 +100,7 @@ export const CommandPalette = () => {
     } catch (error) {
       await createNotification(
         "Error",
-        "Failed to create document. Please try again."
+        "Failed to create source. Please try again."
       );
     }
   };
@@ -128,7 +128,7 @@ export const CommandPalette = () => {
           <CommandGroup heading="Actions">
             <CommandItem onSelect={() => setOpen(false)}>
               <Upload className="mr-2 h-4 w-4" />
-              <span>Upload Document</span>
+              <span>Upload Source</span>
             </CommandItem>
           </CommandGroup>
 
@@ -136,7 +136,7 @@ export const CommandPalette = () => {
             search={search}
             searchResults={searchResults}
             isValidUrl={isValidUrl(search)}
-            onCreateDocument={handleCreateDocument}
+            onCreateSource={handleCreateSource}
             onClose={() => setOpen(false)}
           />
 
@@ -148,7 +148,7 @@ export const CommandPalette = () => {
               }}
             >
               <FileText className="mr-2 h-4 w-4" />
-              <span>Documents</span>
+              <span>Sources</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>
