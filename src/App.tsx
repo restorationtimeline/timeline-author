@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-ro
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import SourceDetails from "./pages/SourceDetails";
+import CrawlQueue from "./pages/CrawlQueue";
 import { supabase } from "./integrations/supabase/client";
 import { ThemeProvider } from "./hooks/use-theme";
 
@@ -31,25 +32,24 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="system" storageKey="app-theme">
-          <BrowserRouter>
-            <TooltipProvider>
-              <AuthWrapper>
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/" element={<Index />} />
-                  <Route path="/sources/:id" element={<SourceDetails />} />
-                </Routes>
-              </AuthWrapper>
-              <Toaster />
-              <Sonner />
-            </TooltipProvider>
-          </BrowserRouter>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="system" storageKey="app-theme">
+        <BrowserRouter>
+          <TooltipProvider>
+            <AuthWrapper>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Index />} />
+                <Route path="/sources/:id" element={<SourceDetails />} />
+                <Route path="/crawl-queue" element={<CrawlQueue />} />
+              </Routes>
+            </AuthWrapper>
+            <Toaster />
+            <Sonner />
+          </TooltipProvider>
+        </BrowserRouter>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 

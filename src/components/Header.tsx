@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LogOut, FilePlus, Moon, Sun, Link } from "lucide-react";
+import { LogOut, FilePlus, Moon, Sun, Link, List } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -99,6 +99,22 @@ export const Header = () => {
           Restoration Timeline
         </RouterLink>
         <div className="flex items-center gap-1 md:gap-4">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/crawl-queue')}
+                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
+              >
+                <List className="h-6 w-6 md:h-4 md:w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-sm">Crawl Queue</p>
+            </TooltipContent>
+          </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button

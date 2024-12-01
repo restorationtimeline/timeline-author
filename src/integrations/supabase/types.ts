@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      crawl_queue: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          domain: string
+          error_message: string | null
+          id: string
+          parent_url: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["crawl_status_enum"] | null
+          uploaded_by: string | null
+          url: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          domain: string
+          error_message?: string | null
+          id?: string
+          parent_url?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["crawl_status_enum"] | null
+          uploaded_by?: string | null
+          url: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          domain?: string
+          error_message?: string | null
+          id?: string
+          parent_url?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["crawl_status_enum"] | null
+          uploaded_by?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       entities: {
         Row: {
           context: string | null
@@ -366,6 +405,7 @@ export type Database = {
       }
     }
     Enums: {
+      crawl_status_enum: "pending" | "processing" | "completed" | "failed"
       document_status_enum: "pending" | "processing" | "completed" | "failed"
       entity_type_enum:
         | "person"
