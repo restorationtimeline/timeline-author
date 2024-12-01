@@ -31,8 +31,8 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <React.StrictMode>
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="system" storageKey="app-theme">
           <BrowserRouter>
             <TooltipProvider>
@@ -48,8 +48,8 @@ const App = () => {
             </TooltipProvider>
           </BrowserRouter>
         </ThemeProvider>
-      </React.StrictMode>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
   );
 };
 
