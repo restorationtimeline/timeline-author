@@ -20,10 +20,10 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Update the task status to processing
+    // Update the task status to in_progress (changed from processing)
     const { error: updateError } = await supabase
       .from('tasks')
-      .update({ status: 'processing', started_at: new Date().toISOString() })
+      .update({ status: 'in_progress', started_at: new Date().toISOString() })
       .eq('source_id', sourceId)
       .eq('task_name', 'Categorize the Source')
 

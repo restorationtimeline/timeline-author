@@ -1,34 +1,43 @@
-import { Circle, CheckCircle2, CirclePlay } from "lucide-react";
+import { Check, Loader2, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ProcessingStepProps {
   step: string;
-  status: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
   isNext: boolean;
   isCompleted: boolean;
   onRunStep: () => void;
 }
 
-export const ProcessingStep = ({ step, status, isNext, isCompleted, onRunStep }: ProcessingStepProps) => {
+export const ProcessingStep = ({ 
+  step, 
+  status, 
+  isNext, 
+  isCompleted,
+  onRunStep 
+}: ProcessingStepProps) => {
   return (
-    <div className="flex items-center space-x-3">
-      {isNext ? (
+    <div className="flex items-center justify-between gap-4 py-2">
+      <div className="flex items-center gap-2">
+        {status === 'in_progress' && (
+          <Loader2 className="h-4 w-4 text-primary animate-spin" />
+        )}
+        {status === 'completed' && (
+          <Check className="h-4 w-4 text-green-500" />
+        )}
+        <span className={isCompleted ? "text-muted-foreground" : ""}>{step}</span>
+      </div>
+      {isNext && (
         <Button
-          variant="ghost"
-          size="icon"
-          className="h-5 w-5 p-0"
+          variant="outline"
+          size="sm"
           onClick={onRunStep}
+          disabled={status === 'in_progress'}
         >
-          <CirclePlay className="h-5 w-5 text-blue-500" />
+          <PlayCircle className="h-4 w-4 mr-2" />
+          Run
         </Button>
-      ) : isCompleted ? (
-        <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-      ) : (
-        <Circle className="h-5 w-5 text-gray-400 flex-shrink-0" />
       )}
-      <span className={isCompleted ? "text-foreground" : "text-muted-foreground"}>
-        {step}
-      </span>
     </div>
   );
 };
