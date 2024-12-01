@@ -1,18 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { LogOut, FilePlus, Moon, Sun, Link, List } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useRef, useState } from "react";
-import { useTheme } from "@/hooks/use-theme";
 import { LinkInputModal } from "./source-input/LinkInputModal";
+import { HeaderLogo } from "./header/HeaderLogo";
+import { HeaderActions } from "./header/HeaderActions";
+import { TooltipProvider } from "./ui/tooltip";
 
 export const Header = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { theme, setTheme } = useTheme();
   const [linkModalOpen, setLinkModalOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -88,101 +86,20 @@ export const Header = () => {
       }
     }
 
-    // Reset the file input
     e.target.value = '';
   };
 
   return (
     <header className="w-full h-16 md:h-10 bg-background border-b border-border/40 shadow-sm">
       <div className="container h-full flex items-center justify-between px-2 md:px-8">
-        <RouterLink to="/" className="text-foreground font-semibold text-lg md:text-xl hover:text-foreground/90 transition-colors">
-          Restoration Timeline
-        </RouterLink>
-        <div className="flex items-center gap-1 md:gap-4">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/crawl-queue')}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
-              >
-                <List className="h-6 w-6 md:h-4 md:w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-sm">Crawl Queue</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleFileUploadClick}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
-              >
-                <FilePlus className="h-6 w-6 md:h-4 md:w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-sm">Upload Files</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setLinkModalOpen(true)}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
-              >
-                <Link className="h-6 w-6 md:h-4 md:w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-sm">Add Links</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
-              >
-                {theme === "dark" ? (
-                  <Sun className="h-6 w-6 md:h-4 md:w-4" />
-                ) : (
-                  <Moon className="h-6 w-6 md:h-4 md:w-4" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-sm">Toggle theme</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
-              >
-                <LogOut className="h-6 w-6 md:h-4 md:w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-sm">Sign out</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+        <HeaderLogo />
+        <TooltipProvider>
+          <HeaderActions
+            onLogout={handleLogout}
+            onFileUploadClick={handleFileUploadClick}
+            onLinkModalOpen={() => setLinkModalOpen(true)}
+          />
+        </TooltipProvider>
       </div>
 
       <input
