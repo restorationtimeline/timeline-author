@@ -56,7 +56,8 @@ export const FileUploadHandler = ({ onClose }: FileUploadHandlerProps) => {
           .from('sources')
           .insert({
             name: baseName,
-            type: file.type,
+            type: fileExt?.toLowerCase() || 'unknown',
+            metadata: { mimetype: file.type },
             status: 'pending',
             uploaded_by: session.user.id,
             storage_path: filePath

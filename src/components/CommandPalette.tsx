@@ -56,7 +56,7 @@ export const CommandPalette = () => {
         .from("sources")
         .insert({
           name: formattedUrl,
-          type: "url",
+          type: "webpage",
           identifiers: { url: formattedUrl, category: "webpage" },
           status: "pending",
           uploaded_by: session.user.id

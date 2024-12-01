@@ -60,7 +60,8 @@ export const DocumentUpload = () => {
           .from('sources')
           .insert({
             name: file.name,
-            type: file.type,
+            type: fileExt?.toLowerCase() || 'unknown',
+            metadata: { mimetype: file.type },
             status: 'pending',
             uploaded_by: session.user.id
           });
