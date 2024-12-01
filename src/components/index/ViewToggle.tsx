@@ -1,9 +1,9 @@
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Grid2X2, List, Columns3 } from "lucide-react";
+import { Grid2X2, Columns3 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ViewToggleProps {
-  activeView: string;
+  activeView: "grid" | "kanban";
   setActiveView: (view: "grid" | "kanban") => void;
 }
 
@@ -39,22 +39,6 @@ export const ViewToggle = ({ activeView, setActiveView }: ViewToggleProps) => (
         </TooltipTrigger>
         <TooltipContent>
           <p>Kanban View (⌘K)</p>
-        </TooltipContent>
-      </Tooltip>
-      
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <TabsTrigger 
-            value="list"
-            onClick={() => setActiveView("list")}
-            className="flex items-center gap-2 aria-selected:bg-gray-200 dark:aria-selected:bg-gray-700 aria-selected:text-foreground aria-selected:font-medium aria-[selected=false]:text-muted-foreground aria-[selected=false]:hover:text-foreground transition-colors"
-          >
-            <List className="h-4 w-4" />
-            List
-          </TabsTrigger>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>List View (⌘L)</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
