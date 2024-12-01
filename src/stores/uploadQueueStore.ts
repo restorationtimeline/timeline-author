@@ -1,10 +1,10 @@
 import { create } from 'zustand';
-import { UploadItem } from '@/components/UploadQueue';
+import { UploadItemType } from '@/components/upload-queue/UploadItem';
 
 interface UploadQueueState {
-  items: UploadItem[];
-  addItem: (item: UploadItem) => void;
-  updateItem: (file: File, updates: Partial<UploadItem>) => void;
+  items: UploadItemType[];
+  addItem: (item: UploadItemType) => void;
+  updateItem: (file: File, updates: Partial<UploadItemType>) => void;
   removeItem: (file: File) => void;
   clearCompleted: () => void;
 }

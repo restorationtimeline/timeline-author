@@ -1,7 +1,6 @@
 import { X } from "lucide-react";
 import { Progress } from "../ui/progress";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export type UploadItemType = {
   file: File;
