@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { SearchResults } from "./command-palette/SearchResults";
 import { FileUploadHandler } from "./command-palette/FileUploadHandler";
 import { isValidUrl, formatUrl } from "@/utils/urlUtils";
+import { Source } from "@/types/source";
 
 export const CommandPalette = () => {
   const [open, setOpen] = React.useState(false);
@@ -32,7 +33,7 @@ export const CommandPalette = () => {
         .limit(5);
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as Source[];
     },
     enabled: !!search && isValidUrl(search),
   });
@@ -54,6 +55,7 @@ export const CommandPalette = () => {
 
       if (error) throw error;
 
+      // Create initial task
       const { error: taskError } = await supabase
         .from('tasks')
         .insert({
@@ -68,13 +70,27 @@ export const CommandPalette = () => {
         console.error("Error creating task:", taskError);
       }
 
-      toast({
-        title: "Document created",
-        description: "The URL has been added to your documents.",
+      // Trigger crawl function
+      const { error: crawlError } = await supabase.functions.invoke('crawl-website', {
+        body: { url: formattedUrl }
       });
 
+      if (crawlError) {
+        console.error("Error triggering crawl:", crawlError);
+        toast({
+          title: "Warning",
+          description: "Document created but crawling failed to start. Please try again from the crawl queue.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Document created and crawling started.",
+        });
+      }
+
       setOpen(false);
-      navigate("/");
+      navigate("/crawl-queue");
     } catch (error) {
       toast({
         title: "Error",

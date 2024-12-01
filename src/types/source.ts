@@ -1,10 +1,19 @@
+import { Json } from "@/integrations/supabase/types";
+
 export interface Source {
   id: string;
   name: string;
   type: string;
-  status: string;
-  identifiers?: {
+  status: "pending" | "processing" | "completed" | "failed";
+  identifiers: {
     url?: string;
     category?: string;
   };
+  created_at?: string;
+  deleted_at?: string;
+  error_logs?: string[];
+  last_updated?: string;
+  storage_path?: string;
+  uploaded_at?: string;
+  uploaded_by?: string;
 }
