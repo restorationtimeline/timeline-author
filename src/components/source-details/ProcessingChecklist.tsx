@@ -58,12 +58,13 @@ export const ProcessingChecklist = ({ status, documentId }: ProcessingChecklistP
         return (
           <ProcessingStep
             key={step}
-            step={step}
+            name={step}
             status={stepStatus}
             isNext={isNext}
             isCompleted={isCompleted}
             onRunStep={() => handleRunStep(step)}
             onResetStep={() => handleResetStep(step)}
+            isLast={index === processingSteps.length - 1}
           />
         );
       })}

@@ -18,7 +18,7 @@ export const useProcessingTasks = (sourceId: string) => {
     const channel = supabase
       .channel('tasks_changes')
       .on(
-        'postgres_changes' as const,
+        'postgres_changes',
         {
           event: '*',
           schema: 'public',

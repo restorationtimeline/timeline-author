@@ -7,6 +7,10 @@ interface ProcessingStepProps {
   name: string;
   description?: string;
   status: TaskStatus;
+  isNext?: boolean;
+  isCompleted?: boolean;
+  onRunStep?: () => Promise<void>;
+  onResetStep?: () => Promise<void>;
   isLast?: boolean;
 }
 
@@ -14,6 +18,10 @@ export const ProcessingStep = ({
   name,
   description,
   status,
+  isNext = false,
+  isCompleted = false,
+  onRunStep,
+  onResetStep,
   isLast = false,
 }: ProcessingStepProps) => {
   const getIcon = () => {
@@ -22,7 +30,7 @@ export const ProcessingStep = ({
         return <Check className="h-4 w-4" />;
       case 'failed':
         return <AlertCircle className="h-4 w-4" />;
-      case 'processing':
+      case 'in_progress':
         return <Loader2 className="h-4 w-4 animate-spin" />;
       default:
         return <Clock className="h-4 w-4" />;
@@ -35,7 +43,7 @@ export const ProcessingStep = ({
         return 'bg-green-500 text-white';
       case 'failed':
         return 'bg-red-500 text-white';
-      case 'processing':
+      case 'in_progress':
         return 'bg-blue-500 text-white';
       default:
         return 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400';
@@ -60,6 +68,22 @@ export const ProcessingStep = ({
           <h4 className="text-sm font-medium">{name}</h4>
           {description && (
             <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          )}
+          {isNext && onRunStep && (
+            <button
+              onClick={onRunStep}
+              className="mt-2 text-sm text-blue-500 hover:text-blue-600"
+            >
+              Run this step
+            </button>
+          )}
+          {isCompleted && onResetStep && (
+            <button
+              onClick={onResetStep}
+              className="mt-2 text-sm text-gray-500 hover:text-gray-600"
+            >
+              Reset
+            </button>
           )}
         </div>
       </div>
