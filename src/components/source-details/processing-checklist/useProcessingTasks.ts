@@ -1,51 +1,32 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { Database } from "@/integrations/supabase/types";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useEffect } from 'react';
+import { TaskStatus } from '@/integrations/supabase/types';
 
-type Task = Database["public"]["Tables"]["tasks"]["Row"];
-type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
+interface Task {
+  id: string;
+  task_name: string;
+  status: TaskStatus;
+  started_at: string | null;
+  completed_at: string | null;
+}
 
-type RealtimePayload = {
-  new: Task;
-  old: Task;
-  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
-};
-
-export const useProcessingTasks = (documentId: string) => {
+export const useProcessingTasks = (sourceId: string) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
     const channel = supabase
-      .channel('task_updates')
+      .channel('tasks_changes')
       .on(
-        'postgres_changes',
+        'postgres_changes' as const,
         {
           event: '*',
           schema: 'public',
           table: 'tasks',
-          filter: `source_id=eq.${documentId}`
+          filter: `source_id=eq.${sourceId}`,
         },
-        (payload: RealtimePayload) => {
-          // Invalidate and refetch tasks when there's an update
-          queryClient.invalidateQueries({ queryKey: ['tasks', documentId] });
-          
-          // Show toast notifications for task status changes
-          if (payload.new && payload.old && payload.new.status !== payload.old.status) {
-            const taskName = payload.new.task_name;
-            switch (payload.new.status as TaskStatus) {
-              case 'in_progress':
-                toast.info(`Started: ${taskName}`);
-                break;
-              case 'completed':
-                toast.success(`Completed: ${taskName}`);
-                break;
-              case 'failed':
-                toast.error(`Failed: ${taskName}`);
-                break;
-            }
-          }
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['tasks', sourceId] });
         }
       )
       .subscribe();
@@ -53,19 +34,19 @@ export const useProcessingTasks = (documentId: string) => {
     return () => {
       channel.unsubscribe();
     };
-  }, [documentId, queryClient]);
+  }, [sourceId, queryClient]);
 
   return useQuery({
-    queryKey: ['tasks', documentId],
+    queryKey: ['tasks', sourceId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
-        .eq('source_id', documentId)
+        .eq('source_id', sourceId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
       return data as Task[];
-    }
+    },
   });
 };

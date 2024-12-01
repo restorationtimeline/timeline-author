@@ -76,7 +76,7 @@ const Index = () => {
         <ViewShortcuts setActiveView={setActiveView} />
         
         <div className="container mx-auto px-4 md:px-8 py-0 md:py-12">
-          <div className="max-w-2xl mx-auto pt-4">
+          <div className="max-w-6xl mx-auto pt-4">
             <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-6">
                 <h2 className="text-2xl font-semibold text-foreground">Sources</h2>

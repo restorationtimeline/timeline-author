@@ -1,59 +1,67 @@
-import { Check, Loader2, PlayCircle, RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
+import React from 'react';
+import { Check, Clock, AlertCircle, Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { TaskStatus } from '@/integrations/supabase/types';
 
 interface ProcessingStepProps {
-  step: string;
+  name: string;
+  description?: string;
   status: TaskStatus;
-  isNext: boolean;
-  isCompleted: boolean;
-  onRunStep: () => void;
-  onResetStep: () => void;
+  isLast?: boolean;
 }
 
-export const ProcessingStep = ({ 
-  step, 
-  status, 
-  isNext, 
-  isCompleted,
-  onRunStep,
-  onResetStep
+export const ProcessingStep = ({
+  name,
+  description,
+  status,
+  isLast = false,
 }: ProcessingStepProps) => {
+  const getIcon = () => {
+    switch (status) {
+      case 'completed':
+        return <Check className="h-4 w-4" />;
+      case 'failed':
+        return <AlertCircle className="h-4 w-4" />;
+      case 'processing':
+        return <Loader2 className="h-4 w-4 animate-spin" />;
+      default:
+        return <Clock className="h-4 w-4" />;
+    }
+  };
+
+  const getStatusColor = () => {
+    switch (status) {
+      case 'completed':
+        return 'bg-green-500 text-white';
+      case 'failed':
+        return 'bg-red-500 text-white';
+      case 'processing':
+        return 'bg-blue-500 text-white';
+      default:
+        return 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400';
+    }
+  };
+
   return (
-    <div className="flex items-center justify-between gap-4 py-2">
-      <div className="flex items-center gap-2">
-        {status === 'in_progress' && (
-          <Loader2 className="h-4 w-4 text-primary animate-spin" />
-        )}
-        {status === 'completed' && (
-          <Check className="h-4 w-4 text-green-500" />
-        )}
-        <span className={isCompleted ? "text-muted-foreground" : ""}>{step}</span>
-      </div>
-      <div className="flex gap-2">
-        {isNext && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRunStep}
-            disabled={status === 'in_progress'}
-          >
-            <PlayCircle className="h-4 w-4 mr-2" />
-            Run
-          </Button>
-        )}
-        {(status === 'completed' || status === 'failed') && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onResetStep}
-            disabled={status === 'in_progress'}
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            Reset
-          </Button>
-        )}
+    <div className="relative pb-8 last:pb-0">
+      {!isLast && (
+        <div className="absolute left-4 top-8 -bottom-8 w-px bg-border dark:bg-gray-800" />
+      )}
+      <div className="flex gap-4 items-start">
+        <div
+          className={cn(
+            'rounded-full p-2 flex items-center justify-center',
+            getStatusColor()
+          )}
+        >
+          {getIcon()}
+        </div>
+        <div className="flex-1">
+          <h4 className="text-sm font-medium">{name}</h4>
+          {description && (
+            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          )}
+        </div>
       </div>
     </div>
   );
