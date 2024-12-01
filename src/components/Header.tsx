@@ -4,61 +4,58 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { useRef } from "react";
-import { useUploadQueueStore } from "@/stores/uploadQueueStore";
+import { useRef, useState } from "react";
 import { useTheme } from "@/hooks/use-theme";
+import { LinkInputModal } from "./source-input/LinkInputModal";
 
 export const Header = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { addItem, updateItem, clearCompleted } = useUploadQueueStore();
   const { theme, setTheme } = useTheme();
+  const [linkModalOpen, setLinkModalOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       navigate("/login");
-      toast({
-        title: "Logged out successfully"
-      });
     } catch (error) {
+      console.error("Error logging out:", error);
       toast({
-        title: "Error logging out",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive",
       });
     }
   };
 
-  const handleFileUpload = async (files: FileList) => {
-    const fileArray = Array.from(files);
-    if (fileArray.length === 0) return;
+  const handleFileUploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
-    for (const file of fileArray) {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to upload files",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    for (const file of Array.from(e.target.files)) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          toast({
-            title: "Error",
-            description: "You must be logged in to upload files",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        addItem({
-          file,
-          progress: 0,
-          status: 'waiting'
-        });
-
-        updateItem(file, { status: 'uploading' });
-
         const fileExt = file.name.split('.').pop();
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('sources')  // Changed from 'documents' to 'sources'
+          .from('sources')
           .upload(fileName, file, {
             contentType: file.type,
             upsert: false
@@ -72,23 +69,17 @@ export const Header = () => {
             name: file.name,
             type: file.type,
             status: 'pending',
-            uploaded_by: session.user.id,
-            storage_path: fileName
+            uploaded_by: session.user.id
           });
 
         if (dbError) throw dbError;
 
-        updateItem(file, { progress: 100, status: 'completed' });
-        
         toast({
           title: "Success",
-          description: `Uploaded ${file.name}`,
+          description: `Uploaded: ${file.name}`,
         });
-
       } catch (error) {
         console.error('Error uploading file:', error);
-        updateItem(file, { status: 'error' });
-        
         toast({
           title: "Error",
           description: `Failed to upload ${file.name}`,
@@ -97,15 +88,8 @@ export const Header = () => {
       }
     }
 
-    setTimeout(() => {
-      clearCompleted();
-    }, 3000);
-  };
-
-  const handleFileUploadClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    // Reset the file input
+    e.target.value = '';
   };
 
   return (
@@ -136,17 +120,14 @@ export const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => {
-                  // Open command palette with focus on URL input
-                  // This functionality will be handled by the command palette component
-                }}
+                onClick={() => setLinkModalOpen(true)}
                 className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
               >
                 <Link className="h-6 w-6 md:h-4 md:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="text-sm">Add Link</p>
+              <p className="text-sm">Add Links</p>
             </TooltipContent>
           </Tooltip>
 
@@ -159,9 +140,9 @@ export const Header = () => {
                 className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
               >
                 {theme === "dark" ? (
-                  <Sun className="h-5 w-5 md:h-4 md:w-4" />
+                  <Sun className="h-6 w-6 md:h-4 md:w-4" />
                 ) : (
-                  <Moon className="h-5 w-5 md:h-4 md:w-4" />
+                  <Moon className="h-6 w-6 md:h-4 md:w-4" />
                 )}
               </Button>
             </TooltipTrigger>
@@ -178,27 +159,28 @@ export const Header = () => {
                 onClick={handleLogout}
                 className="text-foreground/60 hover:text-foreground hover:bg-accent dark:hover:bg-accent/20 h-12 w-12 md:h-8 md:w-8"
               >
-                <LogOut className="h-5 w-5 md:h-4 md:w-4" />
+                <LogOut className="h-6 w-6 md:h-4 md:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="text-sm">Logout</p>
+              <p className="text-sm">Sign out</p>
             </TooltipContent>
           </Tooltip>
         </div>
-
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={(e) => {
-            if (e.target.files) {
-              handleFileUpload(e.target.files);
-            }
-          }}
-          multiple
-        />
       </div>
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileUpload}
+        multiple
+      />
+
+      <LinkInputModal 
+        open={linkModalOpen}
+        onOpenChange={setLinkModalOpen}
+      />
     </header>
   );
 };
