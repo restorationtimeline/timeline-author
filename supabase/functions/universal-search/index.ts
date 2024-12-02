@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { corsHeaders, type SearchResult } from "./types.ts"
-import { searchGoogleBooks } from "./providers/google-books.ts"
-import { searchYouTube } from "./providers/youtube.ts"
-import { searchWikipedia } from "./providers/wikipedia.ts"
+import { corsHeaders } from "./types.ts"
+import { GoogleBooksProvider } from "./providers/google-books.ts"
+import { YouTubeProvider } from "./providers/youtube.ts"
+import { WikipediaProvider } from "./providers/wikipedia.ts"
+import { SearchService } from "./search-service.ts"
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -20,14 +21,13 @@ serve(async (req) => {
       )
     }
 
-    // Perform parallel searches across all sources
-    const [googleBooks, youtube, wikipedia] = await Promise.all([
-      searchGoogleBooks(query),
-      searchYouTube(query),
-      searchWikipedia(query)
+    const searchService = new SearchService([
+      new GoogleBooksProvider(Deno.env.get('GOOGLE_API_KEY') || ''),
+      new YouTubeProvider(Deno.env.get('YOUTUBE_API_KEY') || ''),
+      new WikipediaProvider()
     ]);
 
-    const results = [...googleBooks, ...youtube, ...wikipedia];
+    const results = await searchService.search(query);
 
     return new Response(
       JSON.stringify({ results }),
