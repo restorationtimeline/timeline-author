@@ -7,7 +7,7 @@ import {
   Youtube, 
   Archive, 
   Users, 
-  Wikipedia 
+  BookOpen 
 } from "lucide-react";
 
 interface ContentType {
@@ -52,7 +52,7 @@ const contentTypes: ContentType[] = [
     id: "wikipedia",
     label: "Wikipedia",
     description: "Import Wikipedia articles",
-    icon: <Wikipedia className="h-4 w-4" />
+    icon: <BookOpen className="h-4 w-4" />
   },
   {
     id: "youtube",
