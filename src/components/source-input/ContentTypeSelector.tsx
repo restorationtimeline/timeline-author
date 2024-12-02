@@ -1,13 +1,9 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { 
   FileUp, 
-  Globe, 
-  Book, 
-  Youtube, 
-  Archive, 
-  Users, 
-  BookOpen 
+  PenLine
 } from "lucide-react";
 
 interface ContentType {
@@ -25,40 +21,10 @@ const contentTypes: ContentType[] = [
     icon: <FileUp className="h-4 w-4" />
   },
   {
-    id: "url",
-    label: "Fetch from URL",
-    description: "Import content from web pages",
-    icon: <Globe className="h-4 w-4" />
-  },
-  {
-    id: "books",
-    label: "Google Books & Scholar",
-    description: "Search and import academic content",
-    icon: <Book className="h-4 w-4" />
-  },
-  {
-    id: "archive",
-    label: "Internet Archive",
-    description: "Access historical texts and media",
-    icon: <Archive className="h-4 w-4" />
-  },
-  {
-    id: "genealogy",
-    label: "Family Search & Ancestry",
-    description: "Import genealogical records",
-    icon: <Users className="h-4 w-4" />
-  },
-  {
-    id: "wikipedia",
-    label: "Wikipedia",
-    description: "Import Wikipedia articles",
-    icon: <BookOpen className="h-4 w-4" />
-  },
-  {
-    id: "youtube",
-    label: "YouTube & Videos",
-    description: "Import video transcripts and content",
-    icon: <Youtube className="h-4 w-4" />
+    id: "manual",
+    label: "Create Manual Source",
+    description: "Manually create and enter source details",
+    icon: <PenLine className="h-4 w-4" />
   }
 ];
 
@@ -69,32 +35,48 @@ interface ContentTypeSelectorProps {
 
 export const ContentTypeSelector = ({ value, onValueChange }: ContentTypeSelectorProps) => {
   return (
-    <RadioGroup
-      value={value}
-      onValueChange={onValueChange}
-      className="grid gap-4 grid-cols-2"
-    >
-      {contentTypes.map((type) => (
-        <div key={type.id}>
-          <RadioGroupItem
-            value={type.id}
-            id={type.id}
-            className="peer sr-only"
-          />
-          <Label
-            htmlFor={type.id}
-            className="flex flex-col rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-          >
-            <div className="flex items-center space-x-2 mb-2">
-              {type.icon}
-              <p className="font-medium leading-none">{type.label}</p>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Input
+          type="search"
+          placeholder="Search across Google Scholar, Books, YouTube, Wikipedia, and more..."
+          className="w-full"
+        />
+        <p className="text-sm text-muted-foreground">
+          Search and import content from multiple sources
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-sm font-medium">Or choose an option:</h3>
+        <RadioGroup
+          value={value}
+          onValueChange={onValueChange}
+          className="grid gap-4 grid-cols-2"
+        >
+          {contentTypes.map((type) => (
+            <div key={type.id}>
+              <RadioGroupItem
+                value={type.id}
+                id={type.id}
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor={type.id}
+                className="flex flex-col rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+              >
+                <div className="flex items-center space-x-2 mb-2">
+                  {type.icon}
+                  <p className="font-medium leading-none">{type.label}</p>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {type.description}
+                </p>
+              </Label>
             </div>
-            <p className="text-sm text-muted-foreground">
-              {type.description}
-            </p>
-          </Label>
-        </div>
-      ))}
-    </RadioGroup>
+          ))}
+        </RadioGroup>
+      </div>
+    </div>
   );
 };
