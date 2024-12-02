@@ -1,5 +1,6 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { 
   FileUp, 
   Globe, 
@@ -72,7 +73,7 @@ export const ContentTypeSelector = ({ value, onValueChange }: ContentTypeSelecto
     <RadioGroup
       value={value}
       onValueChange={onValueChange}
-      className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+      className="grid gap-4 grid-cols-2"
     >
       {contentTypes.map((type) => (
         <div key={type.id}>
@@ -83,17 +84,17 @@ export const ContentTypeSelector = ({ value, onValueChange }: ContentTypeSelecto
           />
           <Label
             htmlFor={type.id}
-            className="flex flex-col items-center justify-between rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+            className="flex flex-col h-full rounded-lg border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
           >
-            <div className="flex w-full items-center space-x-2">
-              {type.icon}
-              <div className="flex-1 space-y-1">
+            <AspectRatio ratio={9/16} className="flex flex-col p-4">
+              <div className="flex items-center space-x-2 mb-2">
+                {type.icon}
                 <p className="font-medium leading-none">{type.label}</p>
-                <p className="text-sm text-muted-foreground">
-                  {type.description}
-                </p>
               </div>
-            </div>
+              <p className="text-sm text-muted-foreground flex-grow">
+                {type.description}
+              </p>
+            </AspectRatio>
           </Label>
         </div>
       ))}
