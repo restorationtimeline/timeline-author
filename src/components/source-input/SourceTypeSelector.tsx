@@ -1,9 +1,12 @@
-import { Book, Globe, ScrollText } from "lucide-react";
-import { useState } from "react";
+import { Book, Globe, ScrollText, Upload } from "lucide-react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useDropzone } from 'react-dropzone';
+import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
 
 type SourceType = "book" | "journal" | "url";
 
@@ -37,7 +40,54 @@ const sourceTypes: SourceTypeOption[] = [
 
 export const SourceTypeSelector = () => {
   const [selectedType, setSelectedType] = useState<SourceType | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast.error("You must be logged in to upload files");
+      return;
+    }
+
+    for (const file of acceptedFiles) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('documents')
+          .upload(fileName, file, {
+            contentType: file.type,
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        const { error: dbError } = await supabase
+          .from('sources')
+          .insert({
+            name: file.name,
+            type: file.type,
+            status: 'pending',
+            uploaded_by: session.user.id,
+            storage_path: fileName
+          });
+
+        if (dbError) throw dbError;
+
+        toast.success(`Uploaded: ${file.name}`);
+      } catch (error) {
+        toast.error(`Failed to upload ${file.name}`);
+        console.error(error);
+      }
+    }
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
+    onDrop,
+    noClick: true // Disable click because we want to handle source type selection separately
+  });
 
   const handleContinue = () => {
     if (!selectedType) {
@@ -45,30 +95,34 @@ export const SourceTypeSelector = () => {
       return;
     }
     
-    // Navigate to the appropriate form based on type
-    switch (selectedType) {
-      case "url":
-        navigate("/sources/new?type=url");
-        break;
-      case "book":
-        navigate("/sources/new?type=book");
-        break;
-      case "journal":
-        navigate("/sources/new?type=journal");
-        break;
-    }
+    navigate(`/sources/new?type=${selectedType}`);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
+    <div className="space-y-6" {...getRootProps()}>
+      <input {...getInputProps()} />
+      
+      <div className="space-y-4">
         <h2 className="text-2xl font-semibold tracking-tight">Add New Source</h2>
-        <p className="text-sm text-muted-foreground">
-          Choose the type of source you want to add
-        </p>
+        <div className="flex flex-col space-y-4">
+          <Input
+            type="search"
+            placeholder="Search across multiple sources..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="max-w-xl"
+          />
+          <p className="text-sm text-muted-foreground">
+            Search across Google Scholar, Books, YouTube, Wikipedia, and more
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div 
+        className={`grid grid-cols-1 md:grid-cols-3 gap-4 transition-colors ${
+          isDragActive ? 'bg-primary/5 border-2 border-dashed border-primary rounded-lg p-4' : ''
+        }`}
+      >
         {sourceTypes.map((type) => (
           <Card
             key={type.id}
@@ -102,6 +156,13 @@ export const SourceTypeSelector = () => {
           </Card>
         ))}
       </div>
+
+      {isDragActive && (
+        <div className="text-center p-4">
+          <Upload className="h-12 w-12 mx-auto text-primary" />
+          <p className="mt-2 text-primary font-medium">Drop your files here</p>
+        </div>
+      )}
 
       <Button 
         className="w-full md:w-auto"
