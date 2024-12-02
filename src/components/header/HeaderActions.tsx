@@ -1,6 +1,5 @@
 import { LogOut, Moon, Sun, List } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTheme } from "@/hooks/use-theme";
 import { HeaderActionButton } from "./HeaderActionButton";
 
