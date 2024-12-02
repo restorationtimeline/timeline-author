@@ -1,6 +1,5 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { 
   FileUp, 
   Globe, 
@@ -84,17 +83,15 @@ export const ContentTypeSelector = ({ value, onValueChange }: ContentTypeSelecto
           />
           <Label
             htmlFor={type.id}
-            className="flex flex-col h-full rounded-lg border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+            className="flex flex-col rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
           >
-            <AspectRatio ratio={9/16} className="flex flex-col p-4">
-              <div className="flex items-center space-x-2 mb-2">
-                {type.icon}
-                <p className="font-medium leading-none">{type.label}</p>
-              </div>
-              <p className="text-sm text-muted-foreground flex-grow">
-                {type.description}
-              </p>
-            </AspectRatio>
+            <div className="flex items-center space-x-2 mb-2">
+              {type.icon}
+              <p className="font-medium leading-none">{type.label}</p>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {type.description}
+            </p>
           </Label>
         </div>
       ))}
