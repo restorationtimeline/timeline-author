@@ -3,6 +3,7 @@ import { formatDistance } from "date-fns";
 interface GoogleBookResult {
   id: string;
   title: string;
+  subtitle?: string;
   authors?: string[];
   publishedDate?: string;
   imageLinks?: {
@@ -36,6 +37,11 @@ export const GoogleBookResult = ({ result, onSelect }: Props) => {
       </div>
       <div className="min-w-0 flex-1">
         <h4 className="truncate font-medium text-foreground">{result.title}</h4>
+        {result.subtitle && (
+          <p className="mt-0.5 truncate text-sm text-muted-foreground">
+            {result.subtitle}
+          </p>
+        )}
         <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
           {result.authors && (
             <span className="truncate">

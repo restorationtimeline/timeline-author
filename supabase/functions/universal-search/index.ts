@@ -8,10 +8,16 @@ const corsHeaders = {
 interface SearchResult {
   id: string;
   title: string;
+  subtitle?: string;
   description: string;
   url: string;
   source: string;
   type: string;
+  authors?: string[];
+  publishedDate?: string;
+  imageLinks?: {
+    thumbnail?: string;
+  };
 }
 
 async function searchGoogleBooks(query: string): Promise<SearchResult[]> {
@@ -30,10 +36,14 @@ async function searchGoogleBooks(query: string): Promise<SearchResult[]> {
     return (data.items || []).map((item: any) => ({
       id: item.id,
       title: item.volumeInfo.title,
+      subtitle: item.volumeInfo.subtitle,
       description: item.volumeInfo.description || '',
       url: item.volumeInfo.infoLink,
       source: 'google_books',
-      type: 'book'
+      type: 'book',
+      authors: item.volumeInfo.authors,
+      publishedDate: item.volumeInfo.publishedDate,
+      imageLinks: item.volumeInfo.imageLinks
     }));
   } catch (error) {
     console.error('Google Books search error:', error);
