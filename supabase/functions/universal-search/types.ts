@@ -11,6 +11,15 @@ export interface SearchResult {
   imageLinks?: {
     thumbnail?: string;
   };
+  identifiers?: {
+    isbn?: string[];
+    wikidata?: string;
+    viaf?: string;
+    oclc?: string;
+  };
+  alternateSourceUrls?: {
+    [key: string]: string;
+  };
 }
 
 export const corsHeaders = {

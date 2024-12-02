@@ -25,7 +25,15 @@ export class GoogleBooksProvider implements SearchProvider {
         type: 'book',
         authors: item.volumeInfo.authors,
         publishedDate: item.volumeInfo.publishedDate,
-        imageLinks: item.volumeInfo.imageLinks
+        imageLinks: item.volumeInfo.imageLinks,
+        identifiers: {
+          isbn: item.volumeInfo.industryIdentifiers
+            ?.filter((id: any) => id.type.includes('ISBN'))
+            ?.map((id: any) => id.identifier),
+          oclc: item.volumeInfo.industryIdentifiers
+            ?.find((id: any) => id.type === 'OTHER' && id.identifier.startsWith('OCLC'))
+            ?.identifier
+        }
       }));
     } catch (error) {
       console.error('Google Books search error:', error);
