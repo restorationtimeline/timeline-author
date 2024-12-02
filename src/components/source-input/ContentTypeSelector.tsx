@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { FileUp, PenLine, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { GoogleBookResult } from "../search-results/GoogleBookResult";
 
 interface SearchResult {
   id: string;
@@ -13,6 +14,11 @@ interface SearchResult {
   url: string;
   source: string;
   type: string;
+  authors?: string[];
+  publishedDate?: string;
+  imageLinks?: {
+    thumbnail?: string;
+  };
 }
 
 interface ContentTypeSelectorProps {
@@ -72,6 +78,40 @@ export const ContentTypeSelector = ({ value, onValueChange }: ContentTypeSelecto
     }
   ];
 
+  const handleResultSelect = (result: SearchResult) => {
+    toast({
+      title: "Source selected",
+      description: `Selected ${result.title}`,
+    });
+  };
+
+  const renderSearchResult = (result: SearchResult) => {
+    switch (result.source) {
+      case 'google_books':
+        return (
+          <GoogleBookResult
+            key={result.id}
+            result={result}
+            onSelect={() => handleResultSelect(result)}
+          />
+        );
+      default:
+        return (
+          <div
+            key={`${result.source}-${result.id}`}
+            className="rounded-lg border p-4 hover:bg-accent cursor-pointer"
+            onClick={() => handleResultSelect(result)}
+          >
+            <div className="flex justify-between">
+              <h4 className="font-medium">{result.title}</h4>
+              <span className="text-sm text-muted-foreground">{result.source}</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">{result.description}</p>
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -97,25 +137,7 @@ export const ContentTypeSelector = ({ value, onValueChange }: ContentTypeSelecto
         <div className="space-y-4">
           <h3 className="text-sm font-medium">Search Results</h3>
           <div className="space-y-2">
-            {searchResults.map((result) => (
-              <div
-                key={`${result.source}-${result.id}`}
-                className="rounded-lg border p-4 hover:bg-accent cursor-pointer"
-                onClick={() => {
-                  // Here you would handle adding the source to your system
-                  toast({
-                    title: "Source selected",
-                    description: `Selected ${result.title}`,
-                  });
-                }}
-              >
-                <div className="flex justify-between">
-                  <h4 className="font-medium">{result.title}</h4>
-                  <span className="text-sm text-muted-foreground">{result.source}</span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">{result.description}</p>
-              </div>
-            ))}
+            {searchResults.map(renderSearchResult)}
           </div>
         </div>
       )}
