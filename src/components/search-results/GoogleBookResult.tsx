@@ -16,6 +16,9 @@ interface Props {
 }
 
 export const GoogleBookResult = ({ result, onSelect }: Props) => {
+  // Clean up the thumbnail URL by replacing 'http://' with 'https://'
+  const thumbnailUrl = result.imageLinks?.thumbnail?.replace('http://', 'https://');
+
   return (
     <div
       onClick={onSelect}
@@ -23,9 +26,12 @@ export const GoogleBookResult = ({ result, onSelect }: Props) => {
     >
       <div className="h-16 w-12 flex-shrink-0 overflow-hidden rounded-sm">
         <img
-          src={result.imageLinks?.thumbnail || "/placeholder.svg"}
+          src={thumbnailUrl || "/placeholder.svg"}
           alt={result.title}
           className="h-full w-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = "/placeholder.svg";
+          }}
         />
       </div>
       <div className="min-w-0 flex-1">
