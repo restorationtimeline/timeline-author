@@ -1,4 +1,4 @@
-import { SearchResult, SearchProvider } from '../types';
+import { SearchResult, SearchProvider } from '../types.ts';
 
 export class GoogleBooksProvider implements SearchProvider {
   constructor(private apiKey: string) {}

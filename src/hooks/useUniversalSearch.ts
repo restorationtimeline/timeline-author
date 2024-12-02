@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface SearchResult {
   id: string;
   title: string;
+  subtitle?: string;
   description: string;
   url: string;
   source: string;
@@ -13,6 +14,15 @@ export interface SearchResult {
   publishedDate?: string;
   imageLinks?: {
     thumbnail?: string;
+  };
+  identifiers?: {
+    isbn?: string[];
+    wikidata?: string;
+    viaf?: string;
+    oclc?: string;
+  };
+  alternateSourceUrls?: {
+    [key: string]: string;
   };
 }
 
