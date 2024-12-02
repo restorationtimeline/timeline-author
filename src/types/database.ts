@@ -1,6 +1,4 @@
-import { CrawlQueueTable, EntitiesTable, EventsTable, ProfilesTable, SourcesTable, TasksTable } from './tables';
-import { DatabaseFunctions } from './functions';
-import { DatabaseEnums } from './enums';
+import { ProfilesTable } from './auth';
 
 export type Json =
   | string
@@ -13,16 +11,11 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      crawl_queue: CrawlQueueTable;
-      entities: EntitiesTable;
-      events: EventsTable;
       profiles: ProfilesTable;
-      sources: SourcesTable;
-      tasks: TasksTable;
     };
     Views: Record<string, never>;
-    Functions: DatabaseFunctions;
-    Enums: DatabaseEnums;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
 }
