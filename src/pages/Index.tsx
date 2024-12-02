@@ -3,7 +3,6 @@ import { SourceList } from "@/components/SourceList";
 import { SourceGrid } from "@/components/SourceGrid";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { Header } from "@/components/Header";
-import { CommandPalette } from "@/components/CommandPalette";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { ViewToggle } from "@/components/index/ViewToggle";
 import { UploadQueue } from "@/components/UploadQueue";
@@ -27,7 +26,6 @@ const Index = () => {
     <FileUploadHandler onDragStateChange={setIsDragging}>
       <div className={`min-h-screen bg-background dark:bg-gray-900 transition-colors ${isDragging ? 'bg-primary/5' : ''}`}>
         <Header />
-        <CommandPalette />
         <ViewShortcuts setActiveView={setActiveView} />
         
         <div className="container mx-auto px-4 md:px-8 py-0 md:py-12">
