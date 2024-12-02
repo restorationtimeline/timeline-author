@@ -9,7 +9,113 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      crawl_queue: {
+        Row: {
+          created_at: string | null
+          domain: string
+          id: string
+          parent_url: string | null
+          status: Database["public"]["Enums"]["source_status_enum"] | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          domain: string
+          id?: string
+          parent_url?: string | null
+          status?: Database["public"]["Enums"]["source_status_enum"] | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          domain?: string
+          id?: string
+          parent_url?: string | null
+          status?: Database["public"]["Enums"]["source_status_enum"] | null
+          url?: string
+        }
+        Relationships: []
+      }
+      sources: {
+        Row: {
+          deleted_at: string | null
+          error_logs: string[] | null
+          id: string
+          identifiers: Json | null
+          metadata: Json | null
+          name: string
+          status: Database["public"]["Enums"]["source_status_enum"] | null
+          storage_path: string | null
+          type: string | null
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          deleted_at?: string | null
+          error_logs?: string[] | null
+          id?: string
+          identifiers?: Json | null
+          metadata?: Json | null
+          name: string
+          status?: Database["public"]["Enums"]["source_status_enum"] | null
+          storage_path?: string | null
+          type?: string | null
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          deleted_at?: string | null
+          error_logs?: string[] | null
+          id?: string
+          identifiers?: Json | null
+          metadata?: Json | null
+          name?: string
+          status?: Database["public"]["Enums"]["source_status_enum"] | null
+          storage_path?: string | null
+          type?: string | null
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          source_id: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["task_status_enum"] | null
+          task_name: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          source_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["task_status_enum"] | null
+          task_name: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          source_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["task_status_enum"] | null
+          task_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -189,7 +295,8 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      source_status_enum: "pending" | "processing" | "completed" | "failed"
+      task_status_enum: "pending" | "in_progress" | "completed" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
