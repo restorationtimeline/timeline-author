@@ -1,4 +1,4 @@
-import { SearchResult, SearchProvider } from '../types';
+import { SearchResult, SearchProvider } from '../types.ts';
 
 export class WikipediaProvider implements SearchProvider {
   async search(query: string): Promise<SearchResult[]> {
