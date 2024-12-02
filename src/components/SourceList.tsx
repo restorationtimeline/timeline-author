@@ -1,6 +1,7 @@
 import { Clock } from "lucide-react";
 import { SourceStatusGroup } from "./source-list/SourceStatusGroup";
 import { useSources } from "@/hooks/useSources";
+import { SourceTypeSelector } from "./source-input/SourceTypeSelector";
 
 export const SourceList = () => {
   const { sources, isLoading } = useSources();
@@ -21,10 +22,19 @@ export const SourceList = () => {
     return acc;
   }, {} as Record<string, typeof sources>);
 
-  const statusOrder: ("processing" | "pending" | "completed" | "failed")[] = ["processing", "pending", "completed", "failed"];
+  const statusOrder: ("processing" | "pending" | "completed" | "failed")[] = [
+    "processing",
+    "pending",
+    "completed",
+    "failed"
+  ];
 
   return (
     <div className="w-full space-y-8">
+      <div className="bg-card border rounded-lg p-6">
+        <SourceTypeSelector />
+      </div>
+      
       {statusOrder.map((status) => (
         <SourceStatusGroup
           key={status}
