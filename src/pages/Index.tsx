@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getFriendlyMimeType } from "@/utils/mimeTypes";
+import { Loader2 } from "lucide-react";
 
 const Index = () => {
   const [sources, setSources] = useState("");
@@ -35,6 +36,7 @@ const Index = () => {
     }
 
     setIsSubmitting(true);
+    toast.info(`Processing ${items.length} source${items.length > 1 ? 's' : ''}...`);
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -43,6 +45,9 @@ const Index = () => {
         toast.error("You must be logged in to add sources");
         return;
       }
+
+      let successCount = 0;
+      let failureCount = 0;
 
       for (const item of items) {
         // URL detection
@@ -83,17 +88,25 @@ const Index = () => {
             });
 
           if (error) throw error;
-          toast.success(`Added source: ${item}`);
+          successCount++;
         } catch (error) {
           console.error("Error adding source:", error);
-          toast.error(`Failed to add source: ${item}`);
+          failureCount++;
         }
+      }
+
+      // Show final summary
+      if (successCount > 0) {
+        toast.success(`Successfully added ${successCount} source${successCount > 1 ? 's' : ''}`);
+      }
+      if (failureCount > 0) {
+        toast.error(`Failed to add ${failureCount} source${failureCount > 1 ? 's' : ''}`);
       }
 
       setSources("");
     } catch (error) {
       console.error("Error adding sources:", error);
-      toast.error("Failed to add some sources. Please try again.");
+      toast.error("Failed to add sources. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -119,7 +132,14 @@ const Index = () => {
             disabled={isSubmitting}
             className="w-full py-6 text-lg md:text-base md:py-4"
           >
-            Add Sources
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              'Add Sources'
+            )}
           </Button>
         </div>
 
