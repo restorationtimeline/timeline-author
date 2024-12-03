@@ -10,6 +10,7 @@ import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
 const Index = () => {
   const [sources, setSources] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: sourcesList, isLoading } = useQuery({
     queryKey: ["sources"],
@@ -33,60 +34,69 @@ const Index = () => {
       return;
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      toast.error("You must be logged in to add sources");
-      return;
-    }
+    setIsSubmitting(true);
 
-    for (const item of items) {
-      // URL detection
-      const urlRegex = /^(https?:\/\/[^\s]+)$/;
-      // ISBN detection (both ISBN-10 and ISBN-13)
-      const isbnRegex = /^(?:ISBN(?:-1[03])?:?\s*)?(?=[0-9X]{10}$|(?=(?:[0-9]+[-\s]){3})[-\s0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[-\s]){4})[-\s0-9]{17}$)(?:97[89][-\s]?)?[0-9]{1,5}[-\s]?[0-9]+[-\s]?[0-9]+[-\s]?[0-9X]$/;
-      // DOI detection
-      const doiRegex = /^10.\d{4,9}\/[-._;()\/:A-Z0-9]+$/i;
-      // Wikidata QID detection
-      const qidRegex = /^Q\d+$/;
-
-      let type = "unknown";
-      let identifiers: Record<string, string> = {};
-
-      if (urlRegex.test(item)) {
-        type = "url";
-        identifiers.url = item;
-      } else if (isbnRegex.test(item)) {
-        type = "book";
-        identifiers.isbn = item;
-      } else if (doiRegex.test(item)) {
-        type = "article";
-        identifiers.doi = item;
-      } else if (qidRegex.test(item)) {
-        type = "wikidata";
-        identifiers.qid = item;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("You must be logged in to add sources");
+        return;
       }
 
-      try {
-        const { error } = await supabase
-          .from("sources")
-          .insert({
-            name: type === "unknown" ? item : item.substring(0, 255),
-            type,
-            identifiers,
-            status: "pending",
-            uploaded_by: session.user.id
-          });
+      for (const item of items) {
+        // URL detection
+        const urlRegex = /^(https?:\/\/[^\s]+)$/;
+        // ISBN detection (both ISBN-10 and ISBN-13)
+        const isbnRegex = /^(?:ISBN(?:-1[03])?:?\s*)?(?=[0-9X]{10}$|(?=(?:[0-9]+[-\s]){3})[-\s0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[-\s]){4})[-\s0-9]{17}$)(?:97[89][-\s]?)?[0-9]{1,5}[-\s]?[0-9]+[-\s]?[0-9]+[-\s]?[0-9X]$/;
+        // DOI detection
+        const doiRegex = /^10.\d{4,9}\/[-._;()\/:A-Z0-9]+$/i;
+        // Wikidata QID detection
+        const qidRegex = /^Q\d+$/;
 
-        if (error) throw error;
-        toast.success(`Added source: ${item}`);
-      } catch (error) {
-        console.error("Error adding source:", error);
-        toast.error(`Failed to add source: ${item}`);
+        let type = "unknown";
+        let identifiers: Record<string, string> = {};
+
+        if (urlRegex.test(item)) {
+          type = "url";
+          identifiers.url = item;
+        } else if (isbnRegex.test(item)) {
+          type = "book";
+          identifiers.isbn = item;
+        } else if (doiRegex.test(item)) {
+          type = "article";
+          identifiers.doi = item;
+        } else if (qidRegex.test(item)) {
+          type = "wikidata";
+          identifiers.qid = item;
+        }
+
+        try {
+          const { error } = await supabase
+            .from("sources")
+            .insert({
+              name: type === "unknown" ? item : item.substring(0, 255),
+              type,
+              identifiers,
+              status: "pending",
+              uploaded_by: session.user.id
+            });
+
+          if (error) throw error;
+          toast.success(`Added source: ${item}`);
+        } catch (error) {
+          console.error("Error adding source:", error);
+          toast.error(`Failed to add source: ${item}`);
+        }
       }
-    }
 
-    setSources("");
+      setSources("");
+    } catch (error) {
+      console.error("Error adding sources:", error);
+      toast.error("Failed to add some sources. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -106,6 +116,7 @@ const Index = () => {
           />
           <Button 
             onClick={handleAddSources}
+            disabled={isSubmitting}
             className="w-full py-6 text-lg md:text-base md:py-4"
           >
             Add Sources
