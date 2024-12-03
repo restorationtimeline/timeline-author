@@ -4,9 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getFriendlyMimeType } from "@/utils/mimeTypes";
 
 const Index = () => {
   const [sources, setSources] = useState("");
+
+  const { data: sourcesList, isLoading } = useQuery({
+    queryKey: ["sources"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sources")
+        .select("*")
+        .is('deleted_at', null)
+        .order("uploaded_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const handleAddSources = async () => {
     const items = sources.split("\n").map(item => item.trim()).filter(Boolean);
@@ -93,6 +110,41 @@ const Index = () => {
           >
             Add Sources
           </Button>
+        </div>
+
+        <div className="max-w-4xl mx-auto mt-8">
+          <h2 className="text-xl font-semibold mb-4">Recent Sources</h2>
+          {isLoading ? (
+            <div className="text-center text-muted-foreground">Loading sources...</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Added</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sourcesList?.map((source) => (
+                  <TableRow key={source.id}>
+                    <TableCell className="font-medium">{source.name}</TableCell>
+                    <TableCell>{getFriendlyMimeType(source.type)}</TableCell>
+                    <TableCell className="capitalize">{source.status}</TableCell>
+                    <TableCell>{new Date(source.uploaded_at).toLocaleDateString()}</TableCell>
+                  </TableRow>
+                ))}
+                {!sourcesList?.length && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground">
+                      No sources added yet
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </main>
     </div>
