@@ -39,40 +39,64 @@ export type Database = {
       sources: {
         Row: {
           deleted_at: string | null
+          description: string | null
+          doi: string | null
           error_logs: string[] | null
+          hash: string | null
           id: string
           identifiers: Json | null
+          isbn: string | null
           metadata: Json | null
           name: string
+          qid: string | null
+          source_type: Database["public"]["Enums"]["source_type_enum"] | null
+          source_url: string | null
           status: Database["public"]["Enums"]["source_status_enum"] | null
           storage_path: string | null
           type: string | null
+          updated_at: string | null
           uploaded_at: string | null
           uploaded_by: string | null
         }
         Insert: {
           deleted_at?: string | null
+          description?: string | null
+          doi?: string | null
           error_logs?: string[] | null
+          hash?: string | null
           id?: string
           identifiers?: Json | null
+          isbn?: string | null
           metadata?: Json | null
           name: string
+          qid?: string | null
+          source_type?: Database["public"]["Enums"]["source_type_enum"] | null
+          source_url?: string | null
           status?: Database["public"]["Enums"]["source_status_enum"] | null
           storage_path?: string | null
           type?: string | null
+          updated_at?: string | null
           uploaded_at?: string | null
           uploaded_by?: string | null
         }
         Update: {
           deleted_at?: string | null
+          description?: string | null
+          doi?: string | null
           error_logs?: string[] | null
+          hash?: string | null
           id?: string
           identifiers?: Json | null
+          isbn?: string | null
           metadata?: Json | null
           name?: string
+          qid?: string | null
+          source_type?: Database["public"]["Enums"]["source_type_enum"] | null
+          source_url?: string | null
           status?: Database["public"]["Enums"]["source_status_enum"] | null
           storage_path?: string | null
           type?: string | null
+          updated_at?: string | null
           uploaded_at?: string | null
           uploaded_by?: string | null
         }
@@ -296,6 +320,13 @@ export type Database = {
     }
     Enums: {
       source_status_enum: "pending" | "processing" | "completed" | "failed"
+      source_type_enum:
+        | "pdf"
+        | "epub"
+        | "url"
+        | "youtube"
+        | "wikipedia"
+        | "google_books"
       task_status_enum: "pending" | "in_progress" | "completed" | "failed"
     }
     CompositeTypes: {
