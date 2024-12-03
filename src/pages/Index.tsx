@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getFriendlyMimeType } from "@/utils/mimeTypes";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 const Index = () => {
   const [sources, setSources] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: sourcesList, isLoading } = useQuery({
     queryKey: ["sources"],
@@ -26,6 +28,27 @@ const Index = () => {
       return data;
     },
   });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('source_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'sources'
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['sources'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [queryClient]);
 
   const handleAddSources = async () => {
     const items = sources.split("\n").map(item => item.trim()).filter(Boolean);
