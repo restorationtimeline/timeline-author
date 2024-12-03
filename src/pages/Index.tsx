@@ -89,7 +89,7 @@ const Index = () => {
           />
           <Button 
             onClick={handleAddSources}
-            className="w-full"
+            className="w-full py-6 text-lg md:text-base md:py-4"
           >
             Add Sources
           </Button>
